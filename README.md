@@ -14,8 +14,16 @@ This app can give users some recommendations about the places worth visiting. It
 - Post travel experience (texts and photos) to the public or friends.
 
 ## Basic Wireframes
-![Alt text](https://github.com/csse-490-advanced-web-development/final-project-team-6-wenze/blob/main/doc/LetsTravel_wireframe.png) 
+![Alt text](https://github.com/csse-490-advanced-web-development/final-project-team-6-wenze/blob/main/doc/LetsTravel_wireframe.png)
+
 ## External Resources
+OpenTripMap API (https://opentripmap.io/)
+This api provides:
+- Place list - returns a list of places based on a location, type, rate and other parameters
+- Place Details - returns detailed information about a specific place, such as address, description, url, image and others
+- Place Autosuggest - provides a places query by given (partial) search term and location context
+- Geographic coordinates request - returns coordinates for the given placename (city, village, etc.)
+
 ## Application Structure
 ## Data Structure and Storage
 ## Project Setup
