@@ -14,7 +14,7 @@ This app can give users some recommendations about the places worth visiting. It
 - Post travel experience (texts and photos) to the public or friends.
 
 ## Basic Wireframes
-
+![Alt text]() 
 ## External Resources
 ## Application Structure
 ## Data Structure and Storage
