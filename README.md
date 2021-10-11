@@ -25,6 +25,11 @@ This api provides:
 - Geographic coordinates request - returns coordinates for the given placename (city, village, etc.)
 
 ## Application Structure
+Frontend: React (https://reactjs.org), Ant Design (https://ant.design)
+Backend: Node.js & express
+Database: MongoDB
+Hosting: Heroku
+
 ## Data Structure and Storage
 ## Project Setup
 
