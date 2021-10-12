@@ -4,7 +4,7 @@ import reportWebVitals from './reportWebVitals';
 import 'antd/dist/antd.css';
 import {Layout, Menu} from 'antd';
 import './index.css'
-import {SearchOutlined, BookOutlined, UsergroupAddOutlined} from '@ant-design/icons';
+import {SearchOutlined, BookOutlined, UserOutlined, CompassOutlined, TeamOutlined} from '@ant-design/icons';
 
 const {SubMenu} = Menu;
 const {Header, Content, Sider} = Layout;
@@ -17,8 +17,8 @@ ReactDOM.render(
                 <SubMenu key="home" title="Home"/>
                 <SubMenu key="discover" title="Discover"/>
                 <SubMenu key="contact" title="Contact us"/>
-                <Menu.Item key="login" style={{marginLeft: 'auto'}}>Log In</Menu.Item>
-                <Menu.Item key="signup" style={{float: 'right'}}>Sign Up</Menu.Item>
+                <SubMenu key="login" style={{marginLeft: 'auto'}} title="Log In"/>
+                <SubMenu key="signup" style={{float: 'right', background: 'rgba(64, 145, 247, 1)'}} title="Sign Up"/>
             </Menu>
         </Header>
         <Layout>
@@ -30,8 +30,10 @@ ReactDOM.render(
                     style={{height: '100%', borderRight: 0}}
                 >
                     <Menu.Item key="1" icon={<SearchOutlined />}>Find a Sight</Menu.Item>
-                    <Menu.Item key="2" icon={<UsergroupAddOutlined />}>Friends</Menu.Item>
-                    <Menu.Item key="3" icon={<BookOutlined />}>Agendas</Menu.Item>
+                    <Menu.Item key="2" icon={<UserOutlined />}>Friends</Menu.Item>
+                    <Menu.Item key="3" icon={<TeamOutlined />}>Groups</Menu.Item>
+                    <Menu.Item key="4" icon={<BookOutlined />}>Agendas</Menu.Item>
+                    <Menu.Item key="5" icon={<CompassOutlined />}>Moments</Menu.Item>
                 </Menu>
             </Sider>
             <Layout style={{padding: '0 24px 24px'}}>
