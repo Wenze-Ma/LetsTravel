@@ -31,7 +31,7 @@ This api provides:
 - Hosting: Heroku
 
 ## Data Structure and Storage
-
+![Alt text] (https://github.com/csse-490-advanced-web-development/final-project-team-6-wenze/blob/main/doc/LetsTravel_DataStructure.png)
 
 ## Project Setup
 
