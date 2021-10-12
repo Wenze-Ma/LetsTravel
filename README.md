@@ -3,7 +3,7 @@
 ## Project Summary
 This app can give users some recommendations about the places worth visiting. It can also provide suggestions about user's agendas such that they can just follow the agenda instead of worrying about where to go. Along the route, the users can adjust the agenda according to their wishes. <br/>
 <br/>
-Here is the link to the currently deployed version: https://letstravel-app.herokuapp.com
+Here is the link to the currently deployed app: https://letstravel-app.herokuapp.com
 
 ## Outline of Features
 - Search for a place (maybe a city), and the app can provide a list of sights in that place.
