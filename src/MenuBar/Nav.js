@@ -5,7 +5,7 @@ const {SubMenu} = Menu;
 
 function Nav() {
     return (
-        <Menu theme="dark" mode="horizontal" defaultSelectedKeys={['signup']}>
+        <Menu theme="dark" mode="horizontal" defaultSelectedKeys={['home']}>
             <SubMenu key="home" title="Home"/>
             <SubMenu key="discover" title="Discover"/>
             <SubMenu key="contact" title="Contact us"/>
