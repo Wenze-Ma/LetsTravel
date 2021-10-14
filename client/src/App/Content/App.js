@@ -19,10 +19,14 @@ function App() {
     const [data, setData] = React.useState(null);
 
     React.useEffect(() => {
-        fetch("/api")
+        fetch("/users/all", {
+
+        })
             .then((res) => res.json())
-            .then((data) => setData(data.message));
+            .then((data) => setData(data.data[0].first_name));
     }, []);
+    console.log(data)
+
 
     return (
         <Router>

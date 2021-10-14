@@ -1,17 +1,41 @@
-const path = require('path');
-const express = require('express');
-
-const PORT = process.env.PORT || 5000;
-
+const express = require("express");
 const app = express();
+const cors = require("cors");
+const bodyParser = require("body-parser");
+const logger = require("morgan");
+const mongoose = require("mongoose");
 
+const port = 5000;
+const config = require("./dbConfig");
 
-app.use(express.static(path.resolve(__dirname, '../client/build')));
+const usersRouter = require("./routes/users");
 
-app.get("/api", (req, res) => {
-    res.json({message: 'Hello from server!'});
-})
+app.use(logger('dev'))
 
-app.listen(PORT, () => {
-    console.log(`Server listening on ${PORT}`);
+const dbUrl = config.dbUrl;
+
+const options = {
+    keepAlive: 1,
+    connectTimeoutMS: 30000,
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+};
+
+mongoose.connect(dbUrl, options, (err) => {
+    if (err) {
+        console.log(err);
+    } else {
+        console.log("Connected to database")
+    }
 });
+
+app.use(cors());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+app.use("/users", usersRouter);
+
+app.listen(port, function () {
+    console.log("Runnning on " + port);
+});
+
+module.exports = app;
