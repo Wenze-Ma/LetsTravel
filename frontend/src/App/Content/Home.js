@@ -3,6 +3,20 @@ import {Content} from "antd/es/layout/layout";
 
 
 function Home() {
+    // event.preventDefault();
+
+    // const response = await fetch('/', {
+    //     method: 'GET'
+    // })
+    //
+    // if (!response.ok) {
+    //     const errorMessage = await response.text();
+    //     throw new Error(errorMessage);
+    // }
+    //
+    // console.log( response.json() );
+
+
     return (
         <Content
             className="site-layout-background"
