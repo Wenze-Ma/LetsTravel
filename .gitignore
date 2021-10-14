@@ -105,10 +105,7 @@ dist
 
 # Idea workspace
 .idea/
-frontend/public/.DS_Store
+client/public/.DS_Store
 .DS_Store
-backend/package.json
-backend/package-lock.json
-backend/package.json
-backend/package-lock.json
-frontend/package-lock.json
+server/package-lock.json
+client/package-lock.json
