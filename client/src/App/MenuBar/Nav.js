@@ -1,8 +1,9 @@
-import {Menu, Modal} from "antd";
+import {Menu} from "antd";
 import React, {useState} from "react";
 import {useHistory, useLocation} from "react-router-dom";
 import SignUp from "../Form/SignUp";
 import LogIn from "../Form/LogIn";
+import axios from "axios";
 
 const {SubMenu} = Menu;
 
@@ -19,7 +20,7 @@ function Nav() {
     const [logInVisible, setLogInVisible] = useState(false);
 
     return (
-        <>
+        <div>
             <Menu theme="dark" mode="horizontal" selectedKeys={[pathName === '/' ? 'home' : pathName.replace('/', '')]}>
                 <SubMenu key="home" title="Home" onTitleClick={() => {
                     routeChange('')
@@ -34,24 +35,43 @@ function Nav() {
                 <SubMenu key="signup" style={{float: 'right', background: 'rgba(64, 145, 247, 1)'}} title="Sign Up"
                          onTitleClick={() => {setSignUpVisible(true)}}/>
             </Menu>
-            <Modal
-                title="Sign Up"
+            <SignUp
                 visible={signUpVisible}
-                onOk={() => {setSignUpVisible(false)}}
-                onCancel={() => {setSignUpVisible(false)}}
-            >
-                <SignUp />
-            </Modal>
-            <Modal
-                title="LogIn"
+                onCreate={(values) => {
+                    onSignUp(values);
+                    setSignUpVisible(false);
+                }}
+                onCancel={() => setSignUpVisible(false)}
+            />
+            <LogIn
                 visible={logInVisible}
-                nOk={() => {setLogInVisible(false)}}
-                onCancel={() => {setLogInVisible(false)}}
-            >
-                <LogIn />
-            </Modal>
-        </>
+                onCreate={(values) => {
+                    console.log(values);
+                    setLogInVisible(false);
+                }}
+                onCancel={() => setLogInVisible(false)}
+            />
+        </div>
     )
+}
+
+const onSignUp = (values) => {
+    const user = {
+        email: values['email'],
+        first_name: values['firstName'],
+        last_name: values['lastName'],
+        password: values['password']
+    };
+    axios.get(`/users/${values['email']}`)
+        .then(response => {
+            if (response.data.data._id) {
+                alert("This email is already registered!")
+            } else {
+                axios.post('/users', user)
+                    .then(() => alert("Registration Succeeded!"));
+            }
+        });
+    return true;
 }
 
 export default Nav;

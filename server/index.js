@@ -35,7 +35,7 @@ app.use(bodyParser.json());
 app.use("/users", usersRouter);
 
 app.listen(port, function () {
-    console.log("Runnning on " + port);
+    console.log("Running on " + port);
 });
 
 module.exports = app;

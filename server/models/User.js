@@ -11,6 +11,9 @@ let userSchema = new Schema(
         },
         last_name: {
             type: String,
+        },
+        password: {
+            type: String
         }
     },
     { timestamps: true }

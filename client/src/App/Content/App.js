@@ -9,24 +9,17 @@ import logo from '../../logo.png';
 import Home from "./Home";
 import Discover from "./Discover";
 import Contact from "./Contact";
+import Find from "./Find";
+import Friends from "./Friends";
+import Groups from "./Groups";
+import Agendas from "./Agendas";
+import Moments from "./Moments";
 
 
 const {Header} = Layout;
 
 
 function App() {
-
-    const [data, setData] = React.useState(null);
-
-    React.useEffect(() => {
-        fetch("/users/all", {
-
-        })
-            .then((res) => res.json())
-            .then((data) => setData(data.data[0].first_name));
-    }, []);
-    console.log(data)
-
 
     return (
         <Router>
@@ -41,7 +34,12 @@ function App() {
                         <Switch>
                             <Route exact path='/' component={Home}/>
                             <Route exact path='/discover' component={Discover}/>
-                            <Route exact path='/Contact' component={Contact}/>
+                            <Route exact path='/contact' component={Contact}/>
+                            <Route exact path='/find' component={Find}/>
+                            <Route exact path='/friends' component={Friends}/>
+                            <Route exact path='/groups' component={Groups}/>
+                            <Route exact path='/agendas' component={Agendas}/>
+                            <Route exact path='/moments' component={Moments}/>
                         </Switch>
                     </Layout>
                 </Layout>
