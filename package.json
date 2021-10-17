@@ -1,9 +1,17 @@
 {
+  "name": "letstravel",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-scripts": "4.0.3"
+  },
   "scripts": {
-    "start-client": "react-scripts start",
-    "build": "react-scripts build && (cd server && yarn install)",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "start": "cd server && yarn start"
+    "start-client": "cd client && react-scripts start",
+    "build": "(cd client && react-scripts build) && (cd server && yarn install)",
+    "test": "cd client && react-scripts test",
+    "eject": "cd client && react-scripts eject",
+    "start": "cd server && npm start"
   }
 }
