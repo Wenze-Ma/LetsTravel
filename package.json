@@ -8,10 +8,11 @@
     "react-scripts": "4.0.3"
   },
   "scripts": {
-    "start-client": "cd client && react-scripts start",
-    "build": "(cd client && react-scripts build) && (cd server && yarn install)",
-    "test": "cd client && react-scripts test",
-    "eject": "cd client && react-scripts eject",
-    "start": "cd server && npm start"
+    "start": "cd client && npm start",
+    "heroku-postbuild": "cd client && npm install && npm run build",
+    "server": "cd server && npm start",
+    "client": "npm start --prefix client",
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "build": "npm run build --prefix client"
   }
 }
