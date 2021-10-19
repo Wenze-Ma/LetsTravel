@@ -1,0 +1,1 @@
+{"version":3,"sources":["webpack://src/App/Content/App.css"],"names":[],"mappings":"AACA,MACE,UAAW,CACX,WAAY,CACZ,WAAY,CACZ,uBACF,CAEA,wBACE,eACF","file":"main.07372406.chunk.css","sourcesContent":["\n.logo {\n  float: left;\n  width: 120px;\n  height: 31px;\n  margin: 16px 24px 16px 0;\n}\n\n.site-layout-background {\n  background: #fff;\n}\n"]}
