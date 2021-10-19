@@ -5,7 +5,7 @@ import {BrowserRouter as Router, Route, Switch} from "react-router-dom";
 import React from "react";
 import Nav from "../MenuBar/Nav";
 import SideNav from "../MenuBar/SideNav";
-import logo from '../../logo.png';
+import logo from '../logo.png';
 import Home from "./Home";
 import Discover from "./Discover";
 import Contact from "./Contact";
