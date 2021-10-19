@@ -6,7 +6,7 @@ const bodyParser = require("body-parser");
 const logger = require("morgan");
 const mongoose = require("mongoose");
 
-const port = 5000;
+const port = process.env.PORT || 5000;
 // const config = require("./dbConfig");
 
 const usersRouter = require("./routes/users");
