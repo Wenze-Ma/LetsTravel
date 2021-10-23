@@ -1,9 +1,10 @@
 import {Menu} from "antd";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {useHistory, useLocation} from "react-router-dom";
 import SignUp from "../Form/SignUp";
 import LogIn from "../Form/LogIn";
 import axios from "axios";
+import Cookies from "js-cookie";
 
 const {SubMenu} = Menu;
 
@@ -18,6 +19,19 @@ function Nav() {
 
     const [signUpVisible, setSignUpVisible] = useState(false);
     const [logInVisible, setLogInVisible] = useState(false);
+    const [isLoggedIn, setLoggedIn] = useState(Cookies.get("lets_travel_cookie") != null);
+    const [user, setUser] = useState(null);
+
+    useEffect(() => {
+        if (isLoggedIn) {
+            axios.get("/auth/getUser/" + Cookies.get("lets_travel_cookie"))
+                .then(response => {
+                    console.log(response);
+                    console.log(response.data);
+                    setUser(response.data);
+                });
+        }
+    }, [isLoggedIn])
 
     return (
         <div>
@@ -31,9 +45,31 @@ function Nav() {
                 <SubMenu key="contact" title="Contact us" onTitleClick={() => {
                     routeChange('contact')
                 }}/>
-                <SubMenu key="login" style={{marginLeft: 'auto'}} title="Log In" onTitleClick={() => {setLogInVisible(true)}}/>
-                <SubMenu key="signup" style={{float: 'right', background: 'rgba(64, 145, 247, 1)'}} title="Sign Up"
-                         onTitleClick={() => {setSignUpVisible(true)}}/>
+                {!isLoggedIn ?
+                    <SubMenu key="login" style={{marginLeft: 'auto'}} title="Log In" onTitleClick={() => {
+                        setLogInVisible(true)
+                    }}/> :
+                    <SubMenu key="userInfo" style={{marginLeft: 'auto'}}
+                             title={!user ? "" : "Hi, " + user.data.first_name}
+                    >
+                        <Menu.Item key="logout"
+                                   onClick={() => {
+                                       setLoggedIn(false);
+                                       onLogOut();
+                                   }}
+                        >
+                            Log Out
+                        </Menu.Item>
+                    </SubMenu>
+                }
+                {!isLoggedIn ?
+                    <SubMenu key="signup" style={{float: 'right', background: 'rgba(64, 145, 247, 1)'}}
+                             title="Sign Up"
+                             onTitleClick={() => {
+                                 setSignUpVisible(true)
+                             }}/> : null
+                }
+
             </Menu>
             <SignUp
                 visible={signUpVisible}
@@ -46,7 +82,7 @@ function Nav() {
             <LogIn
                 visible={logInVisible}
                 onCreate={(values) => {
-                    console.log(values);
+                    onLogIn(values, setLoggedIn, setUser);
                     setLogInVisible(false);
                 }}
                 onCancel={() => setLogInVisible(false)}
@@ -62,16 +98,37 @@ const onSignUp = (values) => {
         last_name: values['lastName'],
         password: values['password']
     };
-    axios.get(`/users/${values['email']}`)
+    axios.post('/users', user)
         .then(response => {
-            if (response.data.data._id) {
-                alert("This email is already registered!")
+            if (response.data.existed) {
+                alert("This email is already registered!");
             } else {
-                axios.post('/users', user)
-                    .then(() => alert("Registration Succeeded!"));
+                alert("Registration Succeeded!")
             }
         });
     return true;
+}
+
+const onLogIn = (values, setLoggedIn) => {
+    const credentials = {
+        email: values['email'],
+        password: values['password']
+    }
+    axios.post('/users/login', credentials).then(response => {
+        if (response.data.success) {
+            alert("Log in succeeded!")
+            setLoggedIn(true);
+        } else {
+            alert(response.data.data);
+        }
+    })
+}
+
+const onLogOut = () => {
+    axios.get('/users/logout')
+        .then(() => {
+            alert("logged out")
+        });
 }
 
 export default Nav;

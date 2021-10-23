@@ -12,7 +12,7 @@ let userSchema = new Schema(
         last_name: {
             type: String,
         },
-        password: {
+        password_hash: {
             type: String
         }
     },

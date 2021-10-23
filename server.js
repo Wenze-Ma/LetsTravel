@@ -7,9 +7,10 @@ const logger = require("morgan");
 const mongoose = require("mongoose");
 
 const port = process.env.PORT || 5000;
-// const config = require("./dbConfig");
 
-const usersRouter = require("./routes/users");
+const usersRouter = require("./routes/userRouter");
+const authRouter = require("./routes/authRouter");
+
 const path = require("path");
 
 app.use(logger('dev'))
@@ -35,6 +36,7 @@ app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use("/users", usersRouter);
+app.use("/auth", authRouter);
 
 
 app.use(express.static(path.join(__dirname, 'client/build')))

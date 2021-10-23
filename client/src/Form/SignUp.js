@@ -1,5 +1,5 @@
 import React from 'react';
-import {Button, Modal, Form, Input, Select, Row, Col} from 'antd';
+import {Modal, Form, Input, Select} from 'antd';
 
 const {Option} =Select;
 
@@ -135,27 +135,6 @@ const SignUp = ({ visible, onCreate, onCancel }) => {
                     ]}
                 >
                     <Input.Password />
-                </Form.Item>
-                <Form.Item label="Captcha" extra="We must make sure that your are a human.">
-                    <Row gutter={8}>
-                        <Col span={12}>
-                            <Form.Item
-                                name="captcha"
-                                noStyle
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: 'Please input the captcha you got!',
-                                    },
-                                ]}
-                            >
-                                <Input />
-                            </Form.Item>
-                        </Col>
-                        <Col span={12}>
-                            <Button>Get captcha</Button>
-                        </Col>
-                    </Row>
                 </Form.Item>
             </Form>
 
