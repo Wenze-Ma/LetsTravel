@@ -20,7 +20,7 @@ const Search = ({ onFinish, onFinishFailed }) => {
             autoComplete="off"
         >
             <Form.Item
-                label="Enter a Place"
+                label="Enter a City"
                 name="place"
                 rules={[
                     {
