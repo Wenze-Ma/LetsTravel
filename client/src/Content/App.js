@@ -41,7 +41,7 @@ function App() {
                             <Route exact path='/groups' component={Groups}/>
                             <Route exact path='/agendas' component={Agendas}/>
                             <Route exact path='/moments' component={Moments}/>
-                            <Route path='/searchResults' component={SearchResult}/>
+                            <Route exact path='/searchResults/place=:place&radius=:radius' component={SearchResult}/>
                         </Switch>
                     </Layout>
                 </Layout>

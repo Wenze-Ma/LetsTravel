@@ -1,4 +1,4 @@
-import {Menu} from "antd";
+import {Menu, message} from "antd";
 import React, {useEffect, useState} from "react";
 import {useHistory, useLocation} from "react-router-dom";
 import SignUp from "../Form/SignUp";
@@ -99,9 +99,9 @@ const onSignUp = (values) => {
     axios.post('/users', user)
         .then(response => {
             if (response.data.existed) {
-                alert("This email is already registered!");
+                message.error("This email is already registered!");
             } else {
-                alert("Registration Succeeded!")
+                message.success("Registration Succeeded!")
             }
         });
     return true;
@@ -114,10 +114,10 @@ const onLogIn = (values, setLoggedIn) => {
     }
     axios.post('/users/login', credentials).then(response => {
         if (response.data.success) {
-            alert("Log in succeeded!")
+            message.success("Log in succeeded!")
             setLoggedIn(true);
         } else {
-            alert(response.data.data);
+            message.error(response.data.data);
         }
     })
 }
@@ -125,7 +125,7 @@ const onLogIn = (values, setLoggedIn) => {
 const onLogOut = () => {
     axios.get('/users/logout')
         .then(() => {
-            alert("logged out")
+            message.success("logged out");
         });
 }
 
