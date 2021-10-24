@@ -14,6 +14,7 @@ import Friends from "./Friends";
 import Groups from "./Groups";
 import Agendas from "./Agendas";
 import Moments from "./Moments";
+import SearchResult from "./SearchResult";
 
 
 const {Header} = Layout;
@@ -40,6 +41,7 @@ function App() {
                             <Route exact path='/groups' component={Groups}/>
                             <Route exact path='/agendas' component={Agendas}/>
                             <Route exact path='/moments' component={Moments}/>
+                            <Route path='/searchResults' component={SearchResult}/>
                         </Switch>
                     </Layout>
                 </Layout>

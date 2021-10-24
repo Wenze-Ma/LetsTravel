@@ -26,8 +26,6 @@ function Nav() {
         if (isLoggedIn) {
             axios.get("/auth/getUser/" + Cookies.get("lets_travel_cookie"))
                 .then(response => {
-                    console.log(response);
-                    console.log(response.data);
                     setUser(response.data);
                 });
         }
