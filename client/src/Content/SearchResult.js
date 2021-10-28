@@ -4,7 +4,7 @@ import {Alert, Card, List, Space, message, Image} from "antd";
 import {PlusOutlined, MoreOutlined, ShareAltOutlined, AimOutlined} from "@ant-design/icons";
 import Meta from "antd/es/card/Meta";
 
-const apiKey = 'apikey=5ae2e3f221c38a28845f05b6097eb94fe65fbc1c3616fa86e2f7941d';
+const apiKey = process.env.apiKey;
 
 function SearchResult() {
     const pathName = useLocation().pathname;
