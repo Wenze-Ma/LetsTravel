@@ -56,7 +56,7 @@ module.exports.login = async (req, res) => {
         });
         if (user) {
             if (await bcrypt.compare(req.body.password, user.password_hash)) {
-                let cookievalue = await bcrypt.hash(process.env.SECRET, 10);
+                let cookievalue = await bcrypt.hash("secretword", 10);
                 cookievalue = cookievalue.split("$").join("");
                 cookievalue = cookievalue.split("/").join("");
                 res.cookie("lets_travel_cookie", cookievalue)
