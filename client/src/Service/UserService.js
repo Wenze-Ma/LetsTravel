@@ -21,7 +21,7 @@ const UserService = {
             });
         return true;
     },
-    logIn: (values) =>  {
+    logIn: (values, setLoggedIn) =>  {
         const credentials = {
             email: values['email'],
             password: values['password']
@@ -30,7 +30,7 @@ const UserService = {
             if (response.data.success) {
                 message.success("Log in succeeded!")
                 current_user = response.data.user;
-                console.log(current_user);
+                setLoggedIn(true);
             } else {
                 message.error(response.data.data);
             }
@@ -43,9 +43,9 @@ const UserService = {
             });
         current_user = null;
     },
-    current_user: function () { return current_user },
-    restoreUser: () => {
-        axios.get("/auth/getUser/")
+    getCurrentUser: () => { return current_user },
+    restoreUser: async () => {
+        await axios.get("/auth/getUser/")
             .then(response => {
                 current_user = response.data.data;
                 console.log(current_user);

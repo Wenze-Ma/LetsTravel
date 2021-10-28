@@ -5,6 +5,7 @@ import SignUp from "../Form/SignUp";
 import LogIn from "../Form/LogIn";
 import axios from "axios";
 import Cookies from "js-cookie";
+import UserService from "../Service/UserService";
 
 const {SubMenu} = Menu;
 
@@ -24,12 +25,17 @@ function Nav() {
 
     useEffect(() => {
         if (isLoggedIn) {
-            axios.get("/auth/getUser/" + Cookies.get("lets_travel_cookie"))
+            axios.get("/auth/getUser")
                 .then(response => {
                     setUser(response.data);
                 });
         }
     }, [isLoggedIn])
+
+    // useEffect(() => {
+    // }, [UserService.getCurrentUser()]);
+    //
+    // console.log(UserService.getCurrentUser())
 
     return (
         <div>
@@ -53,7 +59,7 @@ function Nav() {
                         <Menu.Item key="logout"
                                    onClick={() => {
                                        setLoggedIn(false);
-                                       onLogOut();
+                                       UserService.logOut();
                                    }}
                         >
                             Log Out
@@ -72,7 +78,7 @@ function Nav() {
             <SignUp
                 visible={signUpVisible}
                 onCreate={(values) => {
-                    onSignUp(values);
+                    UserService.signUp(values);
                     setSignUpVisible(false);
                 }}
                 onCancel={() => setSignUpVisible(false)}
@@ -80,53 +86,13 @@ function Nav() {
             <LogIn
                 visible={logInVisible}
                 onCreate={(values) => {
-                    onLogIn(values, setLoggedIn, setUser);
+                    UserService.logIn(values, setLoggedIn);
                     setLogInVisible(false);
                 }}
                 onCancel={() => setLogInVisible(false)}
             />
         </div>
     )
-}
-
-const onSignUp = (values) => {
-    const user = {
-        email: values['email'],
-        first_name: values['firstName'],
-        last_name: values['lastName'],
-        password: values['password']
-    };
-    axios.post('/users', user)
-        .then(response => {
-            if (response.data.existed) {
-                message.error("This email is already registered!");
-            } else {
-                message.success("Registration Succeeded!")
-            }
-        });
-    return true;
-}
-
-const onLogIn = (values, setLoggedIn) => {
-    const credentials = {
-        email: values['email'],
-        password: values['password']
-    }
-    axios.post('/users/login', credentials).then(response => {
-        if (response.data.success) {
-            message.success("Log in succeeded!")
-            setLoggedIn(true);
-        } else {
-            message.error(response.data.data);
-        }
-    })
-}
-
-const onLogOut = () => {
-    axios.get('/users/logout')
-        .then(() => {
-            message.success("logged out");
-        });
 }
 
 export default Nav;

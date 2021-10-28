@@ -3,10 +3,10 @@ const Session = require("../models/Session");
 const User = require("../models/User");
 
 // auth login
-router.get("/getUser/:cookie", async (req, res) => {
+router.get("/getUser", async (req, res) => {
     try {
         let session = await Session.findOne({
-            session: decodeURIComponent(req.params.cookie)
+            session: decodeURIComponent(req.cookies['lets_travel_cookie'])
         });
         if (session) {
             let user = await User.findOne({
