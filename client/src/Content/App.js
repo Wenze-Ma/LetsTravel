@@ -1,5 +1,5 @@
 import './App.css';
-import {Layout} from 'antd';
+import {Col, Layout} from 'antd';
 import 'antd/dist/antd.css';
 import {BrowserRouter as Router, Route, Switch} from "react-router-dom";
 import React from "react";
@@ -31,7 +31,7 @@ function App() {
                 </Header>
                 <Layout>
                     <SideNav/>
-                    <Layout style={{padding: '0 24px 24px'}}>
+                    <Layout>
                         <Switch>
                             <Route exact path='/' component={Home}/>
                             <Route exact path='/discover' component={Discover}/>

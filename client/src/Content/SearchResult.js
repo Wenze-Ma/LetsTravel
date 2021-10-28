@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {Link, useLocation} from "react-router-dom";
-import {Alert, Card, List, Space, message} from "antd";
-import {EditOutlined, EllipsisOutlined, SettingOutlined} from "@ant-design/icons";
+import {Alert, Card, List, Space, message, Image} from "antd";
+import {PlusOutlined, MoreOutlined, ShareAltOutlined, AimOutlined} from "@ant-design/icons";
 import Meta from "antd/es/card/Meta";
 
 const apiKey = 'apikey=5ae2e3f221c38a28845f05b6097eb94fe65fbc1c3616fa86e2f7941d';
@@ -65,21 +65,27 @@ function SearchResult() {
         if (currentSelectedSight == null) {
             const hide = message.loading('Retrieving data', 0);
             // Dismiss manually and asynchronously
-            setTimeout(hide, 500);
+            setTimeout(hide, 300);
             return;
         }
-        if (!currentSelectedSight.preview) {
+        if (!currentSelectedSight.preview || !currentSelectedSight.wikipedia_extracts) {
+            const err = message.error("Cannot find the resource");
+            setTimeout(err, 800);
             return
         }
         return <Card
             style={{
                 width: "80%",
-                height: "100%",
                 marginLeft: "auto",
                 marginRight: "auto"
             }}
+            actions={[
+                <PlusOutlined key="add"/>,
+                <ShareAltOutlined key="share" />,
+                <MoreOutlined key="more" />,
+            ]}
             cover={
-                <img alt={currentSelectedSight.name} src={currentSelectedSight.preview?.source}/>
+                <Image alt={currentSelectedSight.name} src={currentSelectedSight.preview?.source}/>
             }
         >
             <Meta
@@ -133,7 +139,7 @@ function SearchResult() {
                                     }
                                     description={item.kinds}
                                 />
-
+                                <AimOutlined /> {parseInt(item.dist)}m
                             </List.Item>
                         )}
                     />
@@ -146,7 +152,7 @@ function SearchResult() {
                     overflow: 'auto',
                     padding: '0 16px',
                     border: '1px solid rgba(140, 140, 140, 0.35)',
-                    marginLeft: "50%"
+                    marginLeft: "50%",
                 }}
             >
                 {displayItem()}
