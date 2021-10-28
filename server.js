@@ -24,7 +24,7 @@ const options = {
     useUnifiedTopology: true,
 };
 
-mongoose.connect('mongodb+srv://dbUser:dbUserPassword@cluster0.4u0km.mongodb.net/lets_travel?retryWrites=true&w=majority', options, (err) => {
+mongoose.connect(dbUrl, options, (err) => {
     if (err) {
         console.log(err);
     } else {
