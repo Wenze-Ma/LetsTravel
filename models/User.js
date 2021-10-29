@@ -14,6 +14,12 @@ let userSchema = new Schema(
         },
         password_hash: {
             type: String
+        },
+        gender: {
+            type: String
+        },
+        src: {
+            type: String
         }
     },
     { timestamps: true }

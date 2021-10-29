@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
-import {Link, useLocation} from "react-router-dom";
-import {Alert, Card, List, Space, message, Image} from "antd";
+import {useLocation} from "react-router-dom";
+import {Alert, Card, List, Space, message, Image, Button} from "antd";
 import {PlusOutlined, MoreOutlined, ShareAltOutlined, AimOutlined} from "@ant-design/icons";
 import Meta from "antd/es/card/Meta";
 
@@ -80,9 +80,9 @@ function SearchResult() {
                 marginRight: "auto"
             }}
             actions={[
-                <PlusOutlined key="add"/>,
-                <ShareAltOutlined key="share" />,
-                <MoreOutlined key="more" />,
+                <Button type="text" icon={<PlusOutlined/>} onClick={()=>{console.log(currentSelectedSight.name)}}>Add</Button>,
+                <Button type="text" icon={<ShareAltOutlined/>} onClick={()=>{console.log(currentSelectedSight.name)}}>Share</Button>,
+                <Button type="text" icon={<MoreOutlined/>} onClick={()=>{console.log(currentSelectedSight.name)}}>Detail</Button>
             ]}
             cover={
                 <Image alt={currentSelectedSight.name} src={currentSelectedSight.preview?.source}/>

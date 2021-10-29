@@ -1,5 +1,6 @@
 import axios from "axios";
 import {message} from "antd";
+import Cookies from "js-cookie";
 
 let current_user;
 
@@ -9,7 +10,8 @@ const UserService = {
             email: values['email'],
             first_name: values['firstName'],
             last_name: values['lastName'],
-            password: values['password']
+            password: values['password'],
+            gender: values['gender']
         };
         axios.post('/users', user)
             .then(response => {
@@ -21,7 +23,7 @@ const UserService = {
             });
         return true;
     },
-    logIn: (values, setLoggedIn) =>  {
+    logIn: (values, setLoggedIn) => {
         const credentials = {
             email: values['email'],
             password: values['password']
@@ -29,27 +31,35 @@ const UserService = {
         axios.post('/users/login', credentials).then(response => {
             if (response.data.success) {
                 message.success("Log in succeeded!")
-                current_user = response.data.user;
                 setLoggedIn(true);
+                current_user = response.data.user;
             } else {
                 message.error(response.data.data);
+                setLoggedIn(false);
             }
         });
     },
-    logOut: () => {
+    logOut: (setUser) => {
         axios.get('/users/logout')
             .then(() => {
                 message.success("logged out");
             });
+        setUser(null);
         current_user = null;
     },
-    getCurrentUser: () => { return current_user },
-    restoreUser: async () => {
-        await axios.get("/auth/getUser/")
+    isLoggedIn: () => !!Cookies.get("lets_travel_cookie"),
+    restoreUser: (setUser) => {
+        axios.get("/auth/getUser")
             .then(response => {
+                setUser(response.data.data);
                 current_user = response.data.data;
-                console.log(current_user);
             });
+    },
+    current_user: current_user,
+    update: (values, setUser) => {
+        axios.put('/users/update', values).then(response => {
+            setUser(response.data.user)
+        });
     }
 }
 

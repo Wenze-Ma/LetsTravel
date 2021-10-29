@@ -5,11 +5,15 @@ const bcrypt = require("bcrypt");
 module.exports.signUp = async (req, res) => {
     try {
         const hashedPassword = await bcrypt.hash(req.body.password, 10);
+        const gender = req.body.gender !== "other" ? req.body.gender + "/" : "";
+        const src = "https://joeschmoe.io/api/v1/" + gender + req.body.first_name;
         let user = new User({
             "email": req.body.email,
             "first_name": req.body.first_name,
             "last_name": req.body.last_name,
-            "password_hash": hashedPassword
+            "password_hash": hashedPassword,
+            "gender": req.body.gender,
+            "src": src
         });
         let finduser = await User.findOne({
             email: req.body.email
@@ -62,7 +66,7 @@ module.exports.login = async (req, res) => {
                 res.cookie("lets_travel_cookie", cookievalue)
                     .send({
                         success: true,
-                        user: user.email,
+                        user: user,
                         first_name: user.first_name,
                         message: "Welcome back"
                     });
@@ -102,4 +106,27 @@ module.exports.logout = async (req, res) => {
         }
     });
     Session.deleteOne({session: cookievalue}, () => { })
+}
+
+module.exports.update = async (req, res) => {
+    try {
+        User.findOneAndUpdate({email: req.body.email}, {
+            first_name: req.body.first_name,
+            last_name: req.body.last_name,
+            gender: req.body.gender
+        }, {new: true},(err, result) => {
+            if (err) {
+                res.send(err);
+            } else {
+                res.json({
+                    user: result
+                });
+            }
+        });
+    } catch (error) {
+        res.status(400).json({
+            status: 400,
+            message: error.message
+        })
+    }
 }

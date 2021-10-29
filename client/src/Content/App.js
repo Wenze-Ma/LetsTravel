@@ -1,8 +1,8 @@
 import './App.css';
-import {Col, Layout} from 'antd';
+import {Layout} from 'antd';
 import 'antd/dist/antd.css';
 import {BrowserRouter as Router, Route, Switch} from "react-router-dom";
-import React from "react";
+import React, {useEffect, useState} from "react";
 import Nav from "../MenuBar/Nav";
 import SideNav from "../MenuBar/SideNav";
 import logo from '../logo.png';
@@ -15,6 +15,9 @@ import Groups from "./Groups";
 import Agendas from "./Agendas";
 import Moments from "./Moments";
 import SearchResult from "./SearchResult";
+import Profile from "./Profile";
+import Cookies from "js-cookie";
+import UserService from "../Service/UserService";
 
 
 const {Header} = Layout;
@@ -22,12 +25,27 @@ const {Header} = Layout;
 
 function App() {
 
+
+    const [isLoggedIn, setLoggedIn] = useState(Cookies.get("lets_travel_cookie") != null);
+    const [user, setUser] = useState(null);
+
+    useEffect(() => {
+        if (isLoggedIn) {
+            UserService.restoreUser(setUser);
+        }
+    }, [isLoggedIn])
+
     return (
         <Router>
             <Layout style={{height: '100vh'}}>
                 <Header className="header">
                     <img src={logo} className="logo" alt='logo'/>
-                    <Nav/>
+                    <Nav
+                        setLoggedIn={setLoggedIn}
+                        setUser={setUser}
+                        isLoggedIn={isLoggedIn}
+                        user={user}
+                    />
                 </Header>
                 <Layout>
                     <SideNav/>
@@ -42,6 +60,7 @@ function App() {
                             <Route exact path='/agendas' component={Agendas}/>
                             <Route exact path='/moments' component={Moments}/>
                             <Route exact path='/searchResults/place=:place&radius=:radius' component={SearchResult}/>
+                            <Route exact path='/profile'><Profile user={user} isLoggedIn={isLoggedIn} setUser={setUser}/></Route>
                         </Switch>
                     </Layout>
                 </Layout>

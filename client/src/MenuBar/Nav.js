@@ -1,16 +1,14 @@
-import {Menu, message} from "antd";
-import React, {useEffect, useState} from "react";
+import {Menu} from "antd";
+import React, {useState} from "react";
 import {useHistory, useLocation} from "react-router-dom";
 import SignUp from "../Form/SignUp";
 import LogIn from "../Form/LogIn";
-import axios from "axios";
-import Cookies from "js-cookie";
 import UserService from "../Service/UserService";
 
 const {SubMenu} = Menu;
 
 
-function Nav() {
+function Nav({setUser, setLoggedIn, isLoggedIn, user}) {
     const history = useHistory();
     const pathName = useLocation().pathname;
 
@@ -20,22 +18,6 @@ function Nav() {
 
     const [signUpVisible, setSignUpVisible] = useState(false);
     const [logInVisible, setLogInVisible] = useState(false);
-    const [isLoggedIn, setLoggedIn] = useState(Cookies.get("lets_travel_cookie") != null);
-    const [user, setUser] = useState(null);
-
-    useEffect(() => {
-        if (isLoggedIn) {
-            axios.get("/auth/getUser")
-                .then(response => {
-                    setUser(response.data);
-                });
-        }
-    }, [isLoggedIn])
-
-    // useEffect(() => {
-    // }, [UserService.getCurrentUser()]);
-    //
-    // console.log(UserService.getCurrentUser())
 
     return (
         <div>
@@ -54,12 +36,19 @@ function Nav() {
                         setLogInVisible(true)
                     }}/> :
                     <SubMenu key="userInfo" style={{marginLeft: 'auto'}}
-                             title={!user ? "" : "Hi, " + user.data.first_name}
+                             title={!user ? "" : "Hi, " + user.first_name}
                     >
+                        <Menu.Item key="profile"
+                                   onClick={() => {
+                                       routeChange('profile')
+                                   }}
+                        >
+                            Profile
+                        </Menu.Item>
                         <Menu.Item key="logout"
                                    onClick={() => {
                                        setLoggedIn(false);
-                                       UserService.logOut();
+                                       UserService.logOut(setUser);
                                    }}
                         >
                             Log Out
