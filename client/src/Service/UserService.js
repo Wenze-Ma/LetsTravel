@@ -60,7 +60,12 @@ const UserService = {
         axios.put('/users/update', values).then(response => {
             setUser(response.data.user)
         });
-    }
+    },
+    updateAvatar: (values, setUser) => {
+        axios.put('/users/updateAvatar', values).then(response => {
+            setUser(response.data.user)
+        });
+    },
 }
 
 Object.freeze(UserService);

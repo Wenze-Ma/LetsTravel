@@ -12,5 +12,7 @@ router.get("/logout", userController.logout);
 
 router.put("/update", userController.update);
 
+router.put("/updateAvatar", userController.updateAvatar);
+
 module.exports = router;
 

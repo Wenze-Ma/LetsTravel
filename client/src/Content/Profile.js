@@ -5,6 +5,7 @@ import {useHistory} from "react-router-dom";
 import Avatar from "antd/es/avatar/avatar";
 import UploadAvatar from "../Form/UploadAvatar";
 import React from "react";
+import axios from "axios";
 
 const {Option} = Select;
 const formItemLayout = {
@@ -39,12 +40,33 @@ function Profile({isLoggedIn, user, setUser}) {
         return null;
     }
 
-    const handleOk = () => {
+    const handleOk = file => {
         setConfirmLoading(true);
-        setTimeout(() => {
-            setVisible(false);
+        if (!file) {
+            message.error("Please upload an image");
             setConfirmLoading(false);
-        }, 2000);
+            return;
+        }
+        const thumburl = file.thumbUrl;
+        const base64 = thumburl?.split(",")[1];
+        if (!base64) {
+            message.error("Something goes wrong");
+            setConfirmLoading(false);
+            return;
+        }
+        let formData = new FormData();
+        formData.append("image", base64);
+        axios.post("https://api.imgbb.com/1/upload?key=e0312ea72d31543bc00977353fd93816", formData)
+            .then(res => {
+                const values = {src: res.data.data.display_url, email: user.email};
+                UserService.updateAvatar(values, setUser);
+                message.success("Successfully uploaded your avatar");
+                setConfirmLoading(false);
+                setVisible(false);
+            })
+            .catch(err => {
+                message.error(err);
+            });
     };
 
     const handleCancel = () => {
@@ -164,7 +186,7 @@ function Profile({isLoggedIn, user, setUser}) {
                 // setVisible={setVisible}
                 confirmLoading={confirmLoading}
                 // setConfirmLoading={setConfirmLoading}
-                handleOk={() => handleOk()}
+                handleOk={file => handleOk(file)}
                 handleCancel={() => handleCancel()}
             />
         </Content>

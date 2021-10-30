@@ -105,7 +105,8 @@ module.exports.logout = async (req, res) => {
             cookievalue = decodeURIComponent(element.split("=")[1].trim());
         }
     });
-    Session.deleteOne({session: cookievalue}, () => { })
+    Session.deleteOne({session: cookievalue}, () => {
+    })
 }
 
 module.exports.update = async (req, res) => {
@@ -114,7 +115,28 @@ module.exports.update = async (req, res) => {
             first_name: req.body.first_name,
             last_name: req.body.last_name,
             gender: req.body.gender
-        }, {new: true},(err, result) => {
+        }, {new: true}, (err, result) => {
+            if (err) {
+                res.send(err);
+            } else {
+                res.json({
+                    user: result
+                });
+            }
+        });
+    } catch (error) {
+        res.status(400).json({
+            status: 400,
+            message: error.message
+        })
+    }
+}
+
+module.exports.updateAvatar = async (req, res) => {
+    try {
+        User.findOneAndUpdate({email: req.body.email}, {
+            src: req.body.src
+        }, {new: true}, (err, result) => {
             if (err) {
                 res.send(err);
             } else {
