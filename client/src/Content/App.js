@@ -18,6 +18,7 @@ import SearchResult from "./SearchResult";
 import Profile from "./Profile";
 import Cookies from "js-cookie";
 import UserService from "../Service/UserService";
+import SightDetail from "./SightDetail";
 
 
 const {Header} = Layout;
@@ -61,6 +62,7 @@ function App() {
                             <Route exact path='/moments' component={Moments}/>
                             <Route exact path='/searchResults/place=:place&radius=:radius' component={SearchResult}/>
                             <Route exact path='/profile'><Profile user={user} isLoggedIn={isLoggedIn} setUser={setUser}/></Route>
+                            <Route exact path='/sightDetail'><SightDetail /></Route>
                         </Switch>
                     </Layout>
                 </Layout>

@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
-import {useLocation} from "react-router-dom";
-import {Alert, Card, List, Space, message, Image, Button} from "antd";
+import {useHistory, useLocation} from "react-router-dom";
+import {Alert, Card, List, message, Image, Button} from "antd";
 import {PlusOutlined, MoreOutlined, ShareAltOutlined, AimOutlined} from "@ant-design/icons";
 import Meta from "antd/es/card/Meta";
 
@@ -17,6 +17,12 @@ function SearchResult() {
     const [sights, setSights] = useState([]);
     const [currentSelectedSight, setSelectedSight] = useState(null);
     const [isSelected, setIsSelected] = useState(false);
+
+    const history = useHistory();
+
+    const routeChange = (newPath) => {
+        history.push(`/${newPath}`);
+    }
 
 
     function setSelected(xid) {
@@ -49,12 +55,6 @@ function SearchResult() {
             });
     }, []);
 
-    const IconText = ({icon, text}) => (
-        <Space>
-            {React.createElement(icon)}
-            {text}
-        </Space>
-    );
 
     function displayItem() {
         if (!isSelected) {
@@ -82,7 +82,7 @@ function SearchResult() {
             actions={[
                 <Button type="text" icon={<PlusOutlined/>} onClick={()=>{console.log(currentSelectedSight.name)}}>Add</Button>,
                 <Button type="text" icon={<ShareAltOutlined/>} onClick={()=>{console.log(currentSelectedSight.name)}}>Share</Button>,
-                <Button type="text" icon={<MoreOutlined/>} onClick={()=>{console.log(currentSelectedSight.name)}}>Detail</Button>
+                <Button type="text" icon={<MoreOutlined/>} onClick={()=>{routeChange('sightDetail')}}>Detail</Button>
             ]}
             cover={
                 <Image alt={currentSelectedSight.name} src={currentSelectedSight.preview?.source}/>
