@@ -35,6 +35,7 @@ function Profile({isLoggedIn, user, setUser}) {
     if (!isLoggedIn) {
         setUser(null);
         history.push(`/`);
+        return null;
     }
     if (!user) {
         return null;

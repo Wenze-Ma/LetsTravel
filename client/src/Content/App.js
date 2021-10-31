@@ -30,6 +30,10 @@ function App() {
     const [isLoggedIn, setLoggedIn] = useState(Cookies.get("lets_travel_cookie") != null);
     const [user, setUser] = useState(null);
 
+    const [sights, setSights] = useState([]);
+    const [currentSelectedSight, setSelectedSight] = useState(null);
+    const [isSelected, setIsSelected] = useState(false);
+
     useEffect(() => {
         if (isLoggedIn) {
             UserService.restoreUser(setUser);
@@ -60,9 +64,29 @@ function App() {
                             <Route exact path='/groups' component={Groups}/>
                             <Route exact path='/agendas' component={Agendas}/>
                             <Route exact path='/moments' component={Moments}/>
-                            <Route exact path='/searchResults/place=:place&radius=:radius' component={SearchResult}/>
-                            <Route exact path='/profile'><Profile user={user} isLoggedIn={isLoggedIn} setUser={setUser}/></Route>
-                            <Route exact path='/sightDetail'><SightDetail /></Route>
+                            <Route exact path='/searchResults/place=:place&radius=:radius'>
+                                <SearchResult
+                                    sights={sights}
+                                    setSights={setSights}
+                                    currentSelectedSight={currentSelectedSight}
+                                    setSelectedSight={setSelectedSight}
+                                    isSelected={isSelected}
+                                    setIsSelected={setIsSelected}
+                                />
+                            </Route>
+                            <Route exact path='/profile'>
+                                <Profile
+                                    user={user}
+                                    isLoggedIn={isLoggedIn}
+                                    setUser={setUser}/>
+                            </Route>
+                            <Route exact path='/sightDetail'>
+                                <SightDetail
+                                    sight={currentSelectedSight}
+                                    user={user}
+                                    setSelectedSight={setSelectedSight}
+                                />
+                            </Route>
                         </Switch>
                     </Layout>
                 </Layout>

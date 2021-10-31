@@ -11,6 +11,7 @@ const port = process.env.PORT || 5000;
 
 const usersRouter = require("./routes/userRouter");
 const authRouter = require("./routes/authRouter");
+const sightRouter = require("./routes/sightRouter");
 
 const path = require("path");
 
@@ -39,6 +40,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use("/users", usersRouter);
 app.use("/auth", authRouter);
+app.use("/sights", sightRouter);
 
 
 app.use(express.static(path.join(__dirname, 'client/build')))
