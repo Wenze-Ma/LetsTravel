@@ -1,4 +1,5 @@
 import axios from "axios";
+import {response} from "express";
 
 const otmAPI = 'https://api.opentripmap.com/0.1/en/places/';
 const apiKey = 'apikey=5ae2e3f221c38a28845f05b6097eb94fe65fbc1c3616fa86e2f7941d';
@@ -35,14 +36,23 @@ const SightService = {
                 });
             });
     },
-    update: (xid, value, comments, setSelectedSight, setSubmitting, setValue) => {
-        axios.put("/sights/update", {xid: xid, rate: value, comments: comments}).then(response => {
+    updateComment: (xid, comments, setSelectedSight, setSubmitting, setValue) => {
+        axios.put("/sights/updateComment", {xid: xid, comments: comments}).then(response => {
             setSelectedSight(response.data.sight);
-            if (!!setSubmitting) {
-                setSubmitting(false);
-                setValue('');
-            }
+            setSubmitting(false);
+            setValue('');
         })
+    },
+    updateRate: (xid, rate, setSelectedSight) =>  {
+        axios.put("/sights/updateRate", {xid: xid, rate: rate}).then(response => {
+            setSelectedSight(response.data.sight);
+        })
+    },
+    getStars: (email, xid, setStars) => {
+        axios.get(`/sights/${xid}/${email}`).then(response => {
+            console.log(Number(response.data.rate));
+            setStars(Number(response.data.rate));
+        });
     }
 }
 

@@ -9,7 +9,7 @@ import {
 } from "@ant-design/icons";
 import {Comment, Avatar, Form, Button, List, Input} from 'antd';
 import moment from 'moment';
-import React, {createElement, useState} from "react";
+import React, {createElement, useEffect, useState} from "react";
 import Text from "antd/es/typography/Text";
 import {useHistory} from "react-router-dom";
 import SightService from "../Service/SightService";
@@ -38,6 +38,11 @@ function SightDetail({sight, user, setSelectedSight}) {
     const [likes, setLikes] = useState(0);
     const [dislikes, setDislikes] = useState(0);
     const [action, setAction] = useState(null);
+    const [stars, setStars] = useState(0);
+
+    useEffect(() => {
+        SightService.getStars(user.email, sight.xid, setStars);
+    }, [stars]);
 
     if (!sight) {
         history.goBack();
@@ -62,7 +67,7 @@ function SightDetail({sight, user, setSelectedSight}) {
                 avatar: user.src,
             }
         ];
-        SightService.update(sight.xid, sight.rate, comments, setSelectedSight, setSubmitting, setValue);
+        SightService.updateComment(sight.xid, comments, setSelectedSight, setSubmitting, setValue);
     };
 
     const handleChange = e => {
@@ -70,7 +75,7 @@ function SightDetail({sight, user, setSelectedSight}) {
     };
 
     const submitRate = value => {
-        SightService.update(sight.xid, value, sight.comments, setSelectedSight);
+        SightService.updateRate(sight.xid, value, setSelectedSight);
     }
 
     const like = () => {
@@ -118,6 +123,8 @@ function SightDetail({sight, user, setSelectedSight}) {
         />
     );
 
+    const avgRate = sight.rates.reduce((acc, item) => {return acc + item.rate}, 0) / sight.rates.length;
+
     return (
         <div
             style={{padding: '25px', overflow: 'auto', background: 'white'}}
@@ -129,11 +136,11 @@ function SightDetail({sight, user, setSelectedSight}) {
             </Breadcrumb>
 
             <Title level={2}>{sight.name}</Title>
-            <Title level={3}>{sight.rate === 0 ? "No rates yet" : sight.rate + " / 5"}</Title>
+            <Title level={3}>{sight.rates.length === 0 ? "No rates yet" : avgRate + " / 5"}</Title>
             <Space size='large'>
                 <HeartTwoTone twoToneColor="#eb2f96"/>
                 <ShareAltOutlined/>
-                <Rate allowHalf defaultValue={0} onChange={submitRate}/>
+                <Rate allowHalf value={stars} onChange={submitRate}/>
                 <Text style={{textAlign: 'center'}}>Click to rate</Text>
             </Space>
             <Divider/>

@@ -15,7 +15,12 @@ let sightSchema = new Schema(
             country: String,
             postcode: String,
         },
-        rate: SchemaTypes.Double,
+        rates: [
+            {
+                user: String,
+                rate: SchemaTypes.Double,
+            }
+        ],
         wikidata: String,
         kinds: String,
         preview: {

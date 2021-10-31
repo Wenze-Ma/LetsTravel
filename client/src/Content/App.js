@@ -32,7 +32,6 @@ function App() {
 
     const [sights, setSights] = useState([]);
     const [currentSelectedSight, setSelectedSight] = useState(null);
-    const [isSelected, setIsSelected] = useState(false);
 
     useEffect(() => {
         if (isLoggedIn) {
@@ -70,8 +69,6 @@ function App() {
                                     setSights={setSights}
                                     currentSelectedSight={currentSelectedSight}
                                     setSelectedSight={setSelectedSight}
-                                    isSelected={isSelected}
-                                    setIsSelected={setIsSelected}
                                 />
                             </Route>
                             <Route exact path='/profile'>

@@ -1,17 +1,19 @@
-import React, {useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import {useHistory, useLocation} from "react-router-dom";
-import {Alert, Card, List, message, Image, Button} from "antd";
+import {Alert, Card, List, message, Image, Button, Empty, Skeleton} from "antd";
 import {PlusOutlined, MoreOutlined, ShareAltOutlined, AimOutlined} from "@ant-design/icons";
 import Meta from "antd/es/card/Meta";
 import SightService from "../Service/SightService";
 
-function SearchResult({sights, setSights, currentSelectedSight, setSelectedSight, isSelected, setIsSelected}) {
+function SearchResult({sights, setSights, currentSelectedSight, setSelectedSight}) {
     const pathName = useLocation().pathname;
     const combined = pathName.split("/")[2];
     const place = combined.split("&")[0].split("=")[1];
     const radius = combined.split("&")[1].split("=")[1];
 
     const history = useHistory();
+    const [isSelected, setIsSelected] = useState(false);
+
 
     const routeChange = (newPath) => {
         history.push(`/${newPath}`);
@@ -28,16 +30,19 @@ function SearchResult({sights, setSights, currentSelectedSight, setSelectedSight
                           type="info"
                           showIcon/>;
         }
-        if (currentSelectedSight == null) {
-            const hide = message.loading('Retrieving data', 0);
-            // Dismiss manually and asynchronously
-            setTimeout(hide, 300);
-            return;
+        if (currentSelectedSight === null) {
+            return <Card
+                style={{
+                    width: "80%",
+                    marginLeft: "auto",
+                    marginRight: "auto"
+                }}
+            >
+                <Skeleton loading={true} active  />
+            </Card>;
         }
         if (!currentSelectedSight.preview || !currentSelectedSight.wikipedia_extracts) {
-            const err = message.error("Cannot find the resource");
-            setTimeout(err, 800);
-            return
+            return <Empty />;
         }
         return <Card
             style={{
