@@ -110,14 +110,16 @@ module.exports.getStars = async (req, res) => {
             xid: req.params.xid
         });
         if (findSight) {
-            res.json({
-                rate: findSight.rates.filter(e => e.user === req.params.email)[0].rate
-            });
-            return;
+            if (findSight.rates.some(e => e.user === req.params.email)) {
+                res.json({
+                    rate: findSight.rates.filter(e => e.user === req.params.email)[0].rate
+                });
+            } else {
+                res.json({
+                    rate: 0
+                });
+            }
         }
-        res.json({
-            rate: 0
-        });
     } catch (error) {
         res.status(400).json({
             status: 400,
@@ -125,3 +127,24 @@ module.exports.getStars = async (req, res) => {
         })
     }
 }
+
+module.exports.getComments = async (req, res) => {
+    try {
+        let findSight = await Sight.findOne({
+            xid: req.params.xid
+        });
+        if (findSight) {
+            res.json({
+                existed: true,
+                data: findSight
+            });
+            return;
+        }
+    } catch (error) {
+        res.status(400).json({
+            status: 400,
+            message: error.message
+        })
+    }
+}
+

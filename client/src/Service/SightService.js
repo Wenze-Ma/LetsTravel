@@ -1,5 +1,4 @@
 import axios from "axios";
-import {response} from "express";
 
 const otmAPI = 'https://api.opentripmap.com/0.1/en/places/';
 const apiKey = 'apikey=5ae2e3f221c38a28845f05b6097eb94fe65fbc1c3616fa86e2f7941d';
@@ -24,9 +23,11 @@ const SightService = {
             });
     },
     setSelectedSight: (xid, setSelectedSight, isSelected, setIsSelected) => {
-        setSelectedSight(null);
-        if (!isSelected) {
-            setIsSelected(true);
+        if (isSelected != null) {
+            setSelectedSight(null);
+            if (!isSelected) {
+                setIsSelected(true);
+            }
         }
         fetch(otmAPI + 'xid/' + xid + '?' + apiKey)
             .then(response => response.json())
@@ -43,15 +44,29 @@ const SightService = {
             setValue('');
         })
     },
-    updateRate: (xid, rate, setSelectedSight) =>  {
+    updateRate: (xid, rate, setSelectedSight, setStars) =>  {
         axios.put("/sights/updateRate", {xid: xid, rate: rate}).then(response => {
             setSelectedSight(response.data.sight);
+            setStars(rate);
         })
     },
     getStars: (email, xid, setStars) => {
         axios.get(`/sights/${xid}/${email}`).then(response => {
-            console.log(Number(response.data.rate));
             setStars(Number(response.data.rate));
+        });
+    },
+    getComments: (xid, setComments, c) => {
+        axios.get(`/sights/getComments/xid/${xid}`).then(async response => {
+            const comments = response.data.data.comments;
+            let temp = [];
+            for (const comment of comments) {
+                await axios.get(`/users/getUserByEmail/${comment.user}`)
+                    .then(response => {
+                        const user = response.data.data;
+                        temp.push({user: user, text: comment.text, time: comment.time});
+                    });
+            }
+            setComments(temp);
         });
     }
 }

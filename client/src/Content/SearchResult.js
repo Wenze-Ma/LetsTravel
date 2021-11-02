@@ -53,7 +53,7 @@ function SearchResult({sights, setSights, currentSelectedSight, setSelectedSight
             actions={[
                 <Button type="text" icon={<PlusOutlined/>} onClick={()=>{console.log(currentSelectedSight.name)}}>Add</Button>,
                 <Button type="text" icon={<ShareAltOutlined/>} onClick={()=>{console.log(currentSelectedSight.name)}}>Share</Button>,
-                <Button type="text" icon={<MoreOutlined/>} onClick={()=>{routeChange('sightDetail')}}>Detail</Button>
+                <Button type="text" icon={<MoreOutlined/>} onClick={()=>{routeChange('sightDetail/xid='+currentSelectedSight.xid)}}>Detail</Button>
             ]}
             cover={
                 <Image alt={currentSelectedSight.name} src={currentSelectedSight.preview?.source}/>

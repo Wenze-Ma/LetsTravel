@@ -176,3 +176,22 @@ module.exports.getCurrentUser = async (req, res) => {
         });
     }
 }
+
+module.exports.getUserByEmail = async (req, res) => {
+    try {
+        let user = await User.findOne({
+            email: req.params.email
+        })
+        if (user) {
+            res.status(200).json({
+                status: 200,
+                data: user
+            });
+        }
+    } catch (err) {
+        res.status(400).json({
+            status: 400,
+            message: err.message
+        });
+    }
+}

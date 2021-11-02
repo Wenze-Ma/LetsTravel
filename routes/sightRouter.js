@@ -10,4 +10,6 @@ router.put("/updateRate", sightController.updateRate);
 
 router.get("/:xid/:email", sightController.getStars);
 
+router.get("/getComments/xid/:xid", sightController.getComments);
+
 module.exports = router;

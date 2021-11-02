@@ -77,7 +77,7 @@ function App() {
                                     isLoggedIn={isLoggedIn}
                                     setUser={setUser}/>
                             </Route>
-                            <Route exact path='/sightDetail'>
+                            <Route exact path='/sightDetail/xid=:xid'>
                                 <SightDetail
                                     sight={currentSelectedSight}
                                     user={user}

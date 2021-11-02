@@ -11,7 +11,7 @@ import {Comment, Avatar, Form, Button, List, Input} from 'antd';
 import moment from 'moment';
 import React, {createElement, useEffect, useState} from "react";
 import Text from "antd/es/typography/Text";
-import {useHistory} from "react-router-dom";
+import {useHistory, useLocation} from "react-router-dom";
 import SightService from "../Service/SightService";
 
 const {TextArea} = Input;
@@ -39,15 +39,24 @@ function SightDetail({sight, user, setSelectedSight}) {
     const [dislikes, setDislikes] = useState(0);
     const [action, setAction] = useState(null);
     const [stars, setStars] = useState(0);
+    const [comments, setComments] = useState([]);
+
+    const pathName = useLocation().pathname;
 
     useEffect(() => {
-        SightService.getStars(user.email, sight.xid, setStars);
-    }, [stars]);
+        if (!sight) {
+            // history.goBack();
+            SightService.setSelectedSight(pathName.split('=')[1], setSelectedSight)
+            // return null;
+        } else {
+            if (user) {
+                SightService.getStars(user.email, sight.xid, setStars);
+            }
+            SightService.getComments(sight.xid, setComments, comments);
+        }
+    }, [submitting]);
 
-    if (!sight) {
-        history.goBack();
-        return null;
-    }
+
 
     const handleSubmit = () => {
         if (!value) {
@@ -56,18 +65,15 @@ function SightDetail({sight, user, setSelectedSight}) {
 
         setSubmitting(true);
 
-        const comments = [
+        const temp = [
             ...sight.comments,
             {
-                user: user.first_name,
+                user: user.email,
                 text: value,
                 time: new Date(),
-                likes: 0,
-                dislikes: 0,
-                avatar: user.src,
             }
         ];
-        SightService.updateComment(sight.xid, comments, setSelectedSight, setSubmitting, setValue);
+        SightService.updateComment(sight.xid, temp, setSelectedSight, setSubmitting, setValue);
     };
 
     const handleChange = e => {
@@ -75,7 +81,7 @@ function SightDetail({sight, user, setSelectedSight}) {
     };
 
     const submitRate = value => {
-        SightService.updateRate(sight.xid, value, setSelectedSight);
+        SightService.updateRate(sight.xid, value, setSelectedSight, setStars);
     }
 
     const like = () => {
@@ -112,8 +118,8 @@ function SightDetail({sight, user, setSelectedSight}) {
             header={`${comments.length} ${comments.length > 1 ? 'replies' : 'reply'}`}
             itemLayout="horizontal"
             renderItem={props => <Comment actions={actions}
-                                          author={props.user}
-                                          avatar={props.avatar}
+                                          author={props.user.first_name}
+                                          avatar={props.user.src}
                                           content={props.text}
                                           datetime={
                                               <Tooltip title={moment().format('YYYY-MM-DD HH:mm:ss')}>
@@ -122,16 +128,19 @@ function SightDetail({sight, user, setSelectedSight}) {
                                           }/>}
         />
     );
+    let avgRate = 0;
+    if (sight) {
+        avgRate = Number((sight.rates.reduce((acc, item) => {return acc + item.rate}, 0) / sight.rates.length).toFixed(1));
+    }
 
-    const avgRate = sight.rates.reduce((acc, item) => {return acc + item.rate}, 0) / sight.rates.length;
-
-    return (
+    return (!sight ?
+        "loading" :
         <div
             style={{padding: '25px', overflow: 'auto', background: 'white'}}
         >
             <Breadcrumb>
                 <Breadcrumb.Item>
-                    <Button type="text" icon={<ArrowLeftOutlined/>} onClick={() => history.goBack()}>Go Back</Button>,
+                    <Button type="text" icon={<ArrowLeftOutlined/>} onClick={() => history.goBack()}>Go Back</Button>
                 </Breadcrumb.Item>
             </Breadcrumb>
 
@@ -140,8 +149,13 @@ function SightDetail({sight, user, setSelectedSight}) {
             <Space size='large'>
                 <HeartTwoTone twoToneColor="#eb2f96"/>
                 <ShareAltOutlined/>
-                <Rate allowHalf value={stars} onChange={submitRate}/>
-                <Text style={{textAlign: 'center'}}>Click to rate</Text>
+                {!!user ?
+                    <>
+                        <Rate allowHalf value={stars} onChange={submitRate}/>
+                        <Text style={{textAlign: 'center'}}>{stars === 0 ? "Click to rate" : "Click to change your rate"}</Text>
+                    </> :
+                    null
+                }
             </Space>
             <Divider/>
             <Title level={4}>Address</Title>
@@ -161,7 +175,7 @@ function SightDetail({sight, user, setSelectedSight}) {
             <Image alt={sight.name} src={sight.preview?.source}/>
             <Divider/>
             <Title level={4}>Comments</Title>
-            {sight.comments.length > 0 && <CommentList comments={sight.comments}/>}
+            {comments.length > 0 && <CommentList comments={comments}/>}
             {!user ? <Text>Please log in first to post your comments</Text> :
                 <Comment
                     avatar={<Avatar src={user.src} alt={user.first_name}/>}

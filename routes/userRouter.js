@@ -14,5 +14,7 @@ router.put("/update", userController.update);
 
 router.put("/updateAvatar", userController.updateAvatar);
 
+router.get("/getUserByEmail/:email", userController.getUserByEmail);
+
 module.exports = router;
 
