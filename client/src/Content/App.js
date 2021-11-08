@@ -12,7 +12,7 @@ import Contact from "./Contact";
 import Find from "./Find";
 import Friends from "./Friends";
 import Groups from "./Groups";
-import Agendas from "./Agendas";
+import Favorites from "./Favorites";
 import Moments from "./Moments";
 import SearchResult from "./SearchResult";
 import Profile from "./Profile";
@@ -25,8 +25,6 @@ const {Header} = Layout;
 
 
 function App() {
-
-
     const [isLoggedIn, setLoggedIn] = useState(Cookies.get("lets_travel_cookie") != null);
     const [user, setUser] = useState(null);
 
@@ -61,7 +59,12 @@ function App() {
                             <Route exact path='/find' component={Find}/>
                             <Route exact path='/friends' component={Friends}/>
                             <Route exact path='/groups' component={Groups}/>
-                            <Route exact path='/agendas' component={Agendas}/>
+                            <Route exact path='/favorites'>
+                                <Favorites
+                                    user={user}
+                                    setUser={setUser}
+                                />
+                            </Route>
                             <Route exact path='/moments' component={Moments}/>
                             <Route exact path='/searchResults/place=:place&radius=:radius'>
                                 <SearchResult
@@ -69,6 +72,8 @@ function App() {
                                     setSights={setSights}
                                     currentSelectedSight={currentSelectedSight}
                                     setSelectedSight={setSelectedSight}
+                                    user={user}
+                                    setUser={setUser}
                                 />
                             </Route>
                             <Route exact path='/profile'>
@@ -82,6 +87,7 @@ function App() {
                                     sight={currentSelectedSight}
                                     user={user}
                                     setSelectedSight={setSelectedSight}
+                                    setUser={setUser}
                                 />
                             </Route>
                         </Switch>

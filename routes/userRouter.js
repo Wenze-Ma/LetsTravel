@@ -16,5 +16,7 @@ router.put("/updateAvatar", userController.updateAvatar);
 
 router.get("/getUserByEmail/:email", userController.getUserByEmail);
 
+router.post("/addFavorites", userController.toggleFavorites);
+
 module.exports = router;
 

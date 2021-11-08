@@ -138,7 +138,6 @@ module.exports.getComments = async (req, res) => {
                 existed: true,
                 data: findSight
             });
-            return;
         }
     } catch (error) {
         res.status(400).json({

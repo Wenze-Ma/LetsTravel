@@ -20,6 +20,9 @@ let userSchema = new Schema(
         },
         src: {
             type: String
+        },
+        favorites: {
+            type: Array
         }
     },
     { timestamps: true }

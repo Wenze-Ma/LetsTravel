@@ -13,6 +13,7 @@ import React, {createElement, useEffect, useState} from "react";
 import Text from "antd/es/typography/Text";
 import {useHistory, useLocation} from "react-router-dom";
 import SightService from "../Service/SightService";
+import UserService from "../Service/UserService";
 
 const {TextArea} = Input;
 
@@ -30,7 +31,7 @@ const Editor = ({onChange, onSubmit, submitting, value}) => (
     </>
 );
 
-function SightDetail({sight, user, setSelectedSight}) {
+function SightDetail({sight, user, setSelectedSight, setUser}) {
 
     const [submitting, setSubmitting] = useState(false);
     const [value, setValue] = useState('');
@@ -54,8 +55,7 @@ function SightDetail({sight, user, setSelectedSight}) {
             }
             SightService.getComments(sight.xid, setComments, comments);
         }
-    }, [submitting]);
-
+    }, [submitting, sight, user]);
 
 
     const handleSubmit = () => {
@@ -96,28 +96,25 @@ function SightDetail({sight, user, setSelectedSight}) {
         setAction('disliked');
     };
 
-    const actions = [
-        <Tooltip key="comment-basic-like" title="Like">
-          <span onClick={like}>
-            {createElement(action === 'liked' ? LikeFilled : LikeOutlined)}
-              <span className="comment-action">{likes}</span>
-          </span>
-        </Tooltip>,
-        <Tooltip key="comment-basic-dislike" title="Dislike">
-          <span onClick={dislike}>
-            {React.createElement(action === 'disliked' ? DislikeFilled : DislikeOutlined)}
-              <span className="comment-action">{dislikes}</span>
-          </span>
-        </Tooltip>,
-        <span key="comment-basic-reply-to">Reply to</span>,
-    ];
-
     const CommentList = ({comments}) => (
         <List
             dataSource={comments}
             header={`${comments.length} ${comments.length > 1 ? 'replies' : 'reply'}`}
             itemLayout="horizontal"
-            renderItem={props => <Comment actions={actions}
+            renderItem={props => <Comment actions={[
+                <Tooltip title="Like">
+                  <span onClick={like}>
+                    {createElement(action === 'liked' ? LikeFilled : LikeOutlined)}
+                      <span className="comment-action">{likes}</span>
+                  </span>
+                </Tooltip>,
+                <Tooltip title="Dislike">
+                  <span onClick={dislike}>
+                    {React.createElement(action === 'disliked' ? DislikeFilled : DislikeOutlined)}
+                      <span className="comment-action">{dislikes}</span>
+                  </span>
+                </Tooltip>,
+            ]}
                                           author={props.user.first_name}
                                           avatar={props.user.src}
                                           content={props.text}
@@ -130,66 +127,73 @@ function SightDetail({sight, user, setSelectedSight}) {
     );
     let avgRate = 0;
     if (sight) {
-        avgRate = Number((sight.rates.reduce((acc, item) => {return acc + item.rate}, 0) / sight.rates.length).toFixed(1));
+        avgRate = Number((sight.rates.reduce((acc, item) => {
+            return acc + item.rate
+        }, 0) / sight.rates.length).toFixed(1));
     }
 
     return (!sight ?
-        "loading" :
-        <div
-            style={{padding: '25px', overflow: 'auto', background: 'white'}}
-        >
-            <Breadcrumb>
-                <Breadcrumb.Item>
-                    <Button type="text" icon={<ArrowLeftOutlined/>} onClick={() => history.goBack()}>Go Back</Button>
-                </Breadcrumb.Item>
-            </Breadcrumb>
+            "loading" :
+            <div
+                style={{padding: '25px', overflow: 'auto', background: 'white'}}
+            >
+                <Breadcrumb>
+                    <Breadcrumb.Item>
+                        <Button type="text" icon={<ArrowLeftOutlined/>} onClick={() => history.goBack()}>Go
+                            Back</Button>
+                    </Breadcrumb.Item>
+                </Breadcrumb>
 
-            <Title level={2}>{sight.name}</Title>
-            <Title level={3}>{sight.rates.length === 0 ? "No rates yet" : avgRate + " / 5"}</Title>
-            <Space size='large'>
-                <HeartTwoTone twoToneColor="#eb2f96"/>
-                <ShareAltOutlined/>
-                {!!user ?
-                    <>
-                        <Rate allowHalf value={stars} onChange={submitRate}/>
-                        <Text style={{textAlign: 'center'}}>{stars === 0 ? "Click to rate" : "Click to change your rate"}</Text>
-                    </> :
-                    null
-                }
-            </Space>
-            <Divider/>
-            <Title level={4}>Address</Title>
-            <Descriptions>
-                <Descriptions.Item label="City">{sight.address?.city}</Descriptions.Item>
-                <Descriptions.Item label="Road">{sight.address?.road}</Descriptions.Item>
-                <Descriptions.Item label="State">{sight.address?.state}</Descriptions.Item>
-                <Descriptions.Item label="County">{sight.address?.county}</Descriptions.Item>
-                <Descriptions.Item label="Country">{sight.address?.country}</Descriptions.Item>
-                <Descriptions.Item label="Postcode">{sight.address?.postcode}</Descriptions.Item>
-            </Descriptions>
-            <Divider/>
-            <Title level={4}>Description</Title>
-            <Paragraph>{sight.wikipedia_extracts?.text}</Paragraph>
-            <Divider/>
-            <Title level={4}>Picture</Title>
-            <Image alt={sight.name} src={sight.preview?.source}/>
-            <Divider/>
-            <Title level={4}>Comments</Title>
-            {comments.length > 0 && <CommentList comments={comments}/>}
-            {!user ? <Text>Please log in first to post your comments</Text> :
-                <Comment
-                    avatar={<Avatar src={user.src} alt={user.first_name}/>}
-                    content={
-                        <Editor
-                            onChange={handleChange}
-                            onSubmit={handleSubmit}
-                            submitting={submitting}
-                            value={value}
-                        />
+                <Title level={2}>{sight.name}</Title>
+                <Title level={3}>{sight.rates.length === 0 ? "No rates yet" : avgRate + " / 5"}</Title>
+                <Space size='large'>
+                    {!!user ?
+                        <>
+                            <HeartTwoTone
+                                twoToneColor={user.favorites.some(f => f.xid === sight.xid) ? "#eb2f96" : ""}
+                                onClick={() => UserService.addFavorites(user.email, sight, setUser)}
+                            />
+                            <ShareAltOutlined/>
+                            <Rate allowHalf value={stars} onChange={submitRate}/>
+                            <Text
+                                style={{textAlign: 'center'}}>{stars === 0 ? "Click to rate" : "Click to change your rate"}</Text>
+                        </> :
+                        null
                     }
-                />
-            }
-        </div>
+                </Space>
+                <Divider/>
+                <Title level={4}>Address</Title>
+                <Descriptions>
+                    <Descriptions.Item label="City">{sight.address?.city}</Descriptions.Item>
+                    <Descriptions.Item label="Road">{sight.address?.road}</Descriptions.Item>
+                    <Descriptions.Item label="State">{sight.address?.state}</Descriptions.Item>
+                    <Descriptions.Item label="County">{sight.address?.county}</Descriptions.Item>
+                    <Descriptions.Item label="Country">{sight.address?.country}</Descriptions.Item>
+                    <Descriptions.Item label="Postcode">{sight.address?.postcode}</Descriptions.Item>
+                </Descriptions>
+                <Divider/>
+                <Title level={4}>Description</Title>
+                <Paragraph>{sight.wikipedia_extracts?.text}</Paragraph>
+                <Divider/>
+                <Title level={4}>Picture</Title>
+                <Image alt={sight.name} src={sight.preview?.source}/>
+                <Divider/>
+                <Title level={4}>Comments</Title>
+                {comments.length > 0 && <CommentList comments={comments}/>}
+                {!user ? <Text>Please log in first to post your comments</Text> :
+                    <Comment
+                        avatar={<Avatar src={user.src} alt={user.first_name}/>}
+                        content={
+                            <Editor
+                                onChange={handleChange}
+                                onSubmit={handleSubmit}
+                                submitting={submitting}
+                                value={value}
+                            />
+                        }
+                    />
+                }
+            </div>
     );
 }
 

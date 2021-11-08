@@ -195,3 +195,32 @@ module.exports.getUserByEmail = async (req, res) => {
         });
     }
 }
+
+module.exports.toggleFavorites = async (req, res) => {
+    try {
+        let user = await User.findOne({
+            email: req.body.email
+        });
+        let favorites;
+        let contains = false;
+        if (user.favorites.some(f => f.xid === req.body.sight.xid)) {
+            favorites = user.favorites.filter(f => f.xid !== req.body.sight.xid);
+            contains = true;
+        } else {
+            favorites = [...user.favorites, req.body.sight];
+            contains = false;
+        }
+        user.favorites = favorites;
+        user = await user.save();
+        res.status(200).json({
+            status: 200,
+            data: user,
+            contains: contains
+        });
+    } catch (err) {
+        res.status(400).json({
+            status: 400,
+            message: err.message
+        });
+    }
+}

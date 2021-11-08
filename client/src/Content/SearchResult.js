@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {useHistory, useLocation} from "react-router-dom";
 import {Alert, Card, List, message, Image, Button, Empty, Skeleton} from "antd";
-import {PlusOutlined, MoreOutlined, ShareAltOutlined, AimOutlined} from "@ant-design/icons";
+import {MoreOutlined, ShareAltOutlined, AimOutlined} from "@ant-design/icons";
 import Meta from "antd/es/card/Meta";
 import SightService from "../Service/SightService";
 
@@ -38,11 +38,11 @@ function SearchResult({sights, setSights, currentSelectedSight, setSelectedSight
                     marginRight: "auto"
                 }}
             >
-                <Skeleton loading={true} active  />
+                <Skeleton loading={true} active/>
             </Card>;
         }
         if (!currentSelectedSight.preview || !currentSelectedSight.wikipedia_extracts) {
-            return <Empty />;
+            return <Empty/>;
         }
         return <Card
             style={{
@@ -51,9 +51,12 @@ function SearchResult({sights, setSights, currentSelectedSight, setSelectedSight
                 marginRight: "auto"
             }}
             actions={[
-                <Button type="text" icon={<PlusOutlined/>} onClick={()=>{console.log(currentSelectedSight.name)}}>Add</Button>,
-                <Button type="text" icon={<ShareAltOutlined/>} onClick={()=>{console.log(currentSelectedSight.name)}}>Share</Button>,
-                <Button type="text" icon={<MoreOutlined/>} onClick={()=>{routeChange('sightDetail/xid='+currentSelectedSight.xid)}}>Detail</Button>
+                <Button type="text" icon={<ShareAltOutlined/>} onClick={() => {
+                    console.log(currentSelectedSight.name)
+                }}>Share</Button>,
+                <Button type="text" icon={<MoreOutlined/>} onClick={() => {
+                    routeChange('sightDetail/xid=' + currentSelectedSight.xid)
+                }}>Detail</Button>
             ]}
             cover={
                 <Image alt={currentSelectedSight.name} src={currentSelectedSight.preview?.source}/>
@@ -84,20 +87,23 @@ function SearchResult({sights, setSights, currentSelectedSight, setSelectedSight
                     float: "left"
                 }}
             >
-                {sights.length === 0
-                    ? "loading..."
-                    : <List
+                {sights.length === 0 ?
+                    <Card
+                        style={{
+                            width: "80%",
+                            marginLeft: "auto",
+                            marginRight: "auto"
+                        }}
+                    >
+                        <Skeleton loading={true} active/>
+                    </Card> :
+                    <List
                         itemLayout="vertical"
                         size="large"
-                        pagination={{
-
-                        }}
+                        pagination={{}}
                         dataSource={sights}
                         renderItem={item => (
-                            <List.Item
-                                actions={[<a key="list-loadmore-edit">Add to Agenda</a>,
-                                    <a key="list-loadmore-more">More</a>]}
-                            >
+                            <List.Item>
                                 <List.Item.Meta
                                     title={
                                         <a
@@ -110,7 +116,7 @@ function SearchResult({sights, setSights, currentSelectedSight, setSelectedSight
                                     }
                                     description={item.kinds}
                                 />
-                                <AimOutlined /> {parseInt(item.dist)}m
+                                <AimOutlined/> {parseInt(item.dist)}m
                             </List.Item>
                         )}
                     />

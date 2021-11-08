@@ -66,6 +66,14 @@ const UserService = {
             setUser(response.data.user)
         });
     },
+    addFavorites: (email, sight, setUser) => {
+        axios.post('/users/addFavorites', {email, sight}).then(response => {
+            setUser(response.data.data);
+            message.success(response.data.contains ?
+                "The sight is removed from your favorites" :
+                "The sight is added to your favorites");
+        });
+    }
 }
 
 Object.freeze(UserService);
