@@ -38,8 +38,12 @@ let sightSchema = new Schema(
                 user: String,
                 text: String,
                 time: Date,
-                likes: Number,
-                dislikes: Number,
+                likes:  {
+                    type: Array
+                },
+                dislikes:  {
+                    type: Array
+                },
                 avatar: String,
             }
         ],

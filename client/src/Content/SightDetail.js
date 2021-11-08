@@ -1,6 +1,6 @@
 import Title from "antd/es/typography/Title";
 import Paragraph from "antd/es/typography/Paragraph";
-import {Breadcrumb, Descriptions, Divider, Image, Rate, Space, Tooltip} from "antd";
+import {Breadcrumb, Card, Descriptions, Divider, Image, message, Rate, Skeleton, Space, Tooltip} from "antd";
 import {
     ShareAltOutlined,
     HeartTwoTone,
@@ -36,9 +36,6 @@ function SightDetail({sight, user, setSelectedSight, setUser}) {
     const [submitting, setSubmitting] = useState(false);
     const [value, setValue] = useState('');
     const history = useHistory();
-    const [likes, setLikes] = useState(0);
-    const [dislikes, setDislikes] = useState(0);
-    const [action, setAction] = useState(null);
     const [stars, setStars] = useState(0);
     const [comments, setComments] = useState([]);
 
@@ -53,7 +50,7 @@ function SightDetail({sight, user, setSelectedSight, setUser}) {
             if (user) {
                 SightService.getStars(user.email, sight.xid, setStars);
             }
-            SightService.getComments(sight.xid, setComments, comments);
+            SightService.getComments(sight.xid, setComments);
         }
     }, [submitting, sight, user]);
 
@@ -84,16 +81,20 @@ function SightDetail({sight, user, setSelectedSight, setUser}) {
         SightService.updateRate(sight.xid, value, setSelectedSight, setStars);
     }
 
-    const like = () => {
-        setLikes(1);
-        setDislikes(0);
-        setAction('liked');
+    const like = (comment) => {
+        if (!user) {
+            message.error("You must log in first");
+            return;
+        }
+        SightService.handleLikes(sight.xid, user.email, comment._id, setSelectedSight, true);
     };
 
-    const dislike = () => {
-        setLikes(0);
-        setDislikes(1);
-        setAction('disliked');
+    const dislike = (comment) => {
+        if (!user) {
+            message.error("You must log in first");
+            return;
+        }
+        SightService.handleLikes(sight.xid, user.email, comment._id, setSelectedSight, false);
     };
 
     const CommentList = ({comments}) => (
@@ -101,26 +102,26 @@ function SightDetail({sight, user, setSelectedSight, setUser}) {
             dataSource={comments}
             header={`${comments.length} ${comments.length > 1 ? 'replies' : 'reply'}`}
             itemLayout="horizontal"
-            renderItem={props => <Comment actions={[
+            renderItem={comment => <Comment actions={[
                 <Tooltip title="Like">
-                  <span onClick={like}>
-                    {createElement(action === 'liked' ? LikeFilled : LikeOutlined)}
-                      <span className="comment-action">{likes}</span>
+                  <span onClick={() => like(comment.comment)}>
+                    {createElement(comment.comment.likes.some(e => e === user?.email) ? LikeFilled : LikeOutlined)}
+                      <span className="comment-action">{comment.comment.likes.length}</span>
                   </span>
                 </Tooltip>,
                 <Tooltip title="Dislike">
-                  <span onClick={dislike}>
-                    {React.createElement(action === 'disliked' ? DislikeFilled : DislikeOutlined)}
-                      <span className="comment-action">{dislikes}</span>
+                  <span onClick={() =>  dislike(comment.comment)}>
+                    {React.createElement(comment.comment.dislikes.some(e => e === user?.email) ? DislikeFilled : DislikeOutlined)}
+                      <span className="comment-action">{comment.comment.dislikes.length}</span>
                   </span>
                 </Tooltip>,
             ]}
-                                          author={props.user.first_name}
-                                          avatar={props.user.src}
-                                          content={props.text}
+                                          author={comment.user.first_name}
+                                          avatar={comment.user.src}
+                                          content={comment.comment.text}
                                           datetime={
                                               <Tooltip title={moment().format('YYYY-MM-DD HH:mm:ss')}>
-                                                  <span>{moment(props.time).fromNow()}</span>
+                                                  <span>{moment(comment.comment.time).fromNow()}</span>
                                               </Tooltip>
                                           }/>}
         />
@@ -133,7 +134,15 @@ function SightDetail({sight, user, setSelectedSight, setUser}) {
     }
 
     return (!sight ?
-            "loading" :
+            <Card
+                style={{
+                    width: "80%",
+                    marginLeft: "auto",
+                    marginRight: "auto"
+                }}
+            >
+                <Skeleton loading={true} active/>
+            </Card> :
             <div
                 style={{padding: '25px', overflow: 'auto', background: 'white'}}
             >

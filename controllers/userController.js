@@ -202,7 +202,7 @@ module.exports.toggleFavorites = async (req, res) => {
             email: req.body.email
         });
         let favorites;
-        let contains = false;
+        let contains;
         if (user.favorites.some(f => f.xid === req.body.sight.xid)) {
             favorites = user.favorites.filter(f => f.xid !== req.body.sight.xid);
             contains = true;

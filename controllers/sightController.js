@@ -147,3 +147,42 @@ module.exports.getComments = async (req, res) => {
     }
 }
 
+module.exports.handleLikes = async (req, res) => {
+    try {
+        let findSight = await Sight.findOne({
+            xid: req.body.xid
+        });
+        let comments = findSight.comments;
+        let index = comments.findIndex(c => c._id == req.body._id);
+        let arr = req.body.isLike ? comments[index].likes : comments[index].dislikes;
+
+        if (!!arr && arr.includes(req.body.email)) {
+            res.status(200).json({
+                status: 200,
+                data: findSight,
+                contains: true
+            })
+            return;
+        } else {
+            if (req.body.isLike) {
+                comments[index].dislikes = comments[index].dislikes.filter(e => e !== req.body.email);
+                comments[index].likes = [...comments[index].likes, req.body.email];
+            } else {
+                comments[index].likes = comments[index].likes.filter(e => e !== req.body.email);
+                comments[index].dislikes = [...comments[index].dislikes, req.body.email];
+            }
+        }
+        findSight.comments = comments;
+        findSight = await findSight.save();
+        res.status(200).json({
+            status: 200,
+            data: findSight,
+            success: true
+        });
+    } catch (error) {
+        res.status(400).json({
+            status: 400,
+            message: error.message
+        })
+    }
+}

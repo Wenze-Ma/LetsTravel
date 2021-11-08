@@ -55,7 +55,7 @@ const SightService = {
             setStars(Number(response.data.rate));
         });
     },
-    getComments: (xid, setComments, c) => {
+    getComments: (xid, setComments) => {
         axios.get(`/sights/getComments/xid/${xid}`).then(async response => {
             const comments = response.data.data.comments;
             let temp = [];
@@ -63,11 +63,19 @@ const SightService = {
                 await axios.get(`/users/getUserByEmail/${comment.user}`)
                     .then(response => {
                         const user = response.data.data;
-                        temp.push({user: user, text: comment.text, time: comment.time});
+                        temp.push({user: user, comment: comment});
                     });
             }
             setComments(temp);
         });
+    },
+    handleLikes: (xid, email, commentId, setSelectedSight, isLike) => {
+        axios.post("/sights/likeComment", {xid: xid, email: email, isLike: isLike, _id: commentId})
+            .then(response => {
+                if (response.data.success) {
+                    setSelectedSight(response.data.data);
+                }
+            });
     }
 }
 

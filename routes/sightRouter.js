@@ -12,4 +12,6 @@ router.get("/:xid/:email", sightController.getStars);
 
 router.get("/getComments/xid/:xid", sightController.getComments);
 
+router.post("/likeComment", sightController.handleLikes);
+
 module.exports = router;
