@@ -162,10 +162,16 @@ module.exports.getCurrentUser = async (req, res) => {
             let user = await User.findOne({
                 _id: session.user
             })
+
             if (user) {
                 res.status(200).json({
                     status: 200,
                     data: user
+                });
+
+            } else {
+                res.status(400).json({
+                   status:400,
                 });
             }
         }
@@ -217,6 +223,203 @@ module.exports.toggleFavorites = async (req, res) => {
             data: user,
             contains: contains
         });
+    } catch (err) {
+        res.status(400).json({
+            status: 400,
+            message: err.message
+        });
+    }
+}
+
+module.exports.addFriend = async (req, res) => {
+    try {
+        let user = await User.findOne({
+            email: req.body.targetEmail
+        });
+        if (user) {
+            if (!user.pendingRequest) {
+                user.pendingRequest = [req.body.ownerEmail]
+            } else {
+                if (user.pendingRequest.some(p => p === req.body.ownerEmail)) {
+                    res.status(200).json({
+                        status: 200,
+                        message: "You have already sent the request!"
+                    });
+                    return;
+                }
+                if (user.friends.some(f => f === req.body.ownerEmail)) {
+                    res.status(200).json({
+                        status: 200,
+                        message: "You are already friends!"
+                    });
+                    return;
+                }
+                user.pendingRequest = [...user.pendingRequest, req.body.ownerEmail]
+            }
+            user = await user.save();
+            res.status(200).json({
+                status: 200,
+                data: user,
+                success: true
+            });
+        } else {
+            res.status(200).json({
+                status: 200,
+                message: "The user does not exist!"
+            });
+        }
+
+    } catch (err) {
+        res.status(400).json({
+            status: 400,
+            message: err.message
+        });
+    }
+}
+
+module.exports.getRequests = async (req, res) => {
+    try {
+        let user = await User.findOne({
+            email: req.body.email
+        });
+        if (user) {
+            let requests = user.pendingRequest;
+            let users = [];
+            for (const request of requests) {
+                let current = await User.findOne({
+                    email: request
+                });
+                users.push(current);
+            }
+            res.status(200).json({
+                users: users
+            });
+        }
+    } catch (err) {
+        res.status(400).json({
+            status: 400,
+            message: err.message
+        });
+    }
+}
+
+module.exports.getFriends = async (req, res) => {
+    try {
+        let user = await User.findOne({
+            email: req.body.email
+        });
+        if (user) {
+            let friends = user.friends;
+            let users = [];
+            for (const friend of friends) {
+                let current = await User.findOne({
+                    email: friend
+                });
+                users.push(current);
+            }
+            res.status(200).json({
+                users: users
+            });
+        }
+    } catch (err) {
+        res.status(400).json({
+            status: 400,
+            message: err.message
+        });
+    }
+}
+
+
+module.exports.acceptRequest = async (req, res) => {
+    try {
+        let user = await User.findOne({
+            email: req.body.ownerEmail
+        });
+        if (user) {
+            let requests = user.pendingRequest;
+            requests = requests.filter(email => email !== req.body.targetEmail);
+            user.pendingRequest = requests;
+
+            if (!user.friends) {
+                user.friends = [req.body.targetEmail];
+            } else {
+                user.friends = [...user.friends, req.body.targetEmail];
+            }
+            user = await user.save();
+
+            let user2 = await User.findOne({
+                email: req.body.targetEmail
+            })
+            if (user2) {
+                if (!user2.friends) {
+                    user2.friends = [req.body.ownerEmail];
+                } else {
+                    user2.friends = [...user2.friends, req.body.ownerEmail];
+                }
+            }
+            await user2.save();
+
+            res.status(200).json({
+                status: 200,
+                data: user,
+                success: true
+            });
+        }
+    } catch (err) {
+        res.status(400).json({
+            status: 400,
+            message: err.message
+        });
+    }
+}
+
+module.exports.rejectRequest = async (req, res) => {
+    try {
+        let user = await User.findOne({
+            email: req.body.ownerEmail
+        });
+        if (user) {
+            let requests = user.pendingRequest;
+            requests = requests.filter(email => email !== req.body.targetEmail);
+            user.pendingRequest = requests;
+            user = await user.save();
+            res.status(200).json({
+                status: 200,
+                data: user,
+                success: true
+            });
+        }
+    } catch (err) {
+        res.status(400).json({
+            status: 400,
+            message: err.message
+        });
+    }
+}
+
+module.exports.deleteFriend = async (req, res) => {
+    try {
+        let user = await User.findOne({
+            email: req.body.ownerEmail
+        });
+        if (user) {
+            user.friends = user.friends.filter(email => email !== req.body.targetEmail);
+            user = await user.save();
+
+            let user2 = await User.findOne({
+                email: req.body.targetEmail
+            });
+            if (user2) {
+                user2.friends = user2.friends.filter(email => email !== req.body.ownerEmail);
+                await user2.save();
+
+                res.status(200).json({
+                    status: 200,
+                    data: user,
+                    success: true
+                });
+            }
+        }
     } catch (err) {
         res.status(400).json({
             status: 400,

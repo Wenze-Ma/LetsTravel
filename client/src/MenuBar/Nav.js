@@ -1,5 +1,5 @@
 import {Menu} from "antd";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {useHistory, useLocation} from "react-router-dom";
 import SignUp from "../Form/SignUp";
 import LogIn from "../Form/LogIn";
@@ -18,6 +18,16 @@ function Nav({setUser, setLoggedIn, isLoggedIn, user}) {
 
     const [signUpVisible, setSignUpVisible] = useState(false);
     const [logInVisible, setLogInVisible] = useState(false);
+    const [currentUser, setCurrentUser] = useState(null);
+
+    useEffect(() => {
+        if (!user) {
+            UserService.restoreUser(setCurrentUser);
+        } else {
+            setCurrentUser(user);
+        }
+    }, [user, isLoggedIn]);
+
 
     return (
         <div>
@@ -36,7 +46,7 @@ function Nav({setUser, setLoggedIn, isLoggedIn, user}) {
                         setLogInVisible(true)
                     }}/> :
                     <SubMenu key="userInfo" style={{marginLeft: 'auto'}}
-                             title={!user ? "" : "Hi, " + user.first_name}
+                             title={!currentUser ? "" : "Hi, " + currentUser.first_name}
                     >
                         <Menu.Item key="profile"
                                    onClick={() => {
@@ -75,7 +85,7 @@ function Nav({setUser, setLoggedIn, isLoggedIn, user}) {
             <LogIn
                 visible={logInVisible}
                 onCreate={(values) => {
-                    UserService.logIn(values, setLoggedIn);
+                    UserService.logIn(values, setLoggedIn, setUser);
                     setLogInVisible(false);
                 }}
                 onCancel={() => setLogInVisible(false)}

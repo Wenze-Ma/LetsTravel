@@ -2,7 +2,7 @@ import React from "react";
 import {Content} from "antd/es/layout/layout";
 
 
-function Groups() {
+function Chat() {
     return (
         <Content
             className="site-layout-background"
@@ -12,9 +12,9 @@ function Groups() {
                 minHeight: 280,
             }}
         >
-            Groups!
+            Chat!
         </Content>
     )
 }
 
-export default Groups;
+export default Chat;

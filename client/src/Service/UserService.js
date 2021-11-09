@@ -23,7 +23,7 @@ const UserService = {
             });
         return true;
     },
-    logIn: (values, setLoggedIn) => {
+    logIn: (values, setLoggedIn, setUser) => {
         const credentials = {
             email: values['email'],
             password: values['password']
@@ -32,6 +32,7 @@ const UserService = {
             if (response.data.success) {
                 message.success("Log in succeeded!")
                 setLoggedIn(true);
+                setUser(response.data.user)
                 current_user = response.data.user;
             } else {
                 message.error(response.data.data);
@@ -63,7 +64,9 @@ const UserService = {
     },
     updateAvatar: (values, setUser) => {
         axios.put('/users/updateAvatar', values).then(response => {
-            setUser(response.data.user)
+            if (!!response.data.user) {
+                setUser(response.data.user)
+            }
         });
     },
     addFavorites: (email, sight, setUser) => {
@@ -73,7 +76,57 @@ const UserService = {
                 "The sight is removed from your favorites" :
                 "The sight is added to your favorites");
         });
-    }
+    },
+    sendRequest: (ownerEmail, targetEmail) => {
+        if (ownerEmail === targetEmail) {
+            message.error("You cannot add yourself!")
+            return;
+        }
+        axios.post('/users/addRequest', {ownerEmail: ownerEmail, targetEmail: targetEmail})
+            .then(response => {
+                if (response.data.success) {
+                    message.success("Request sent");
+                } else {
+                    message.error(response.data.message);
+                }
+               console.log(response);
+            });
+    },
+    getRequests: (email, setRequests) => {
+        axios.post('/users/getRequests', {email: email})
+            .then(response => {
+                setRequests(response.data.users);
+            })
+    },
+    getFriends: (email, setFriends) => {
+        axios.post('/users/getFriends', {email: email})
+            .then(response => {
+                setFriends(response.data.users);
+            });
+    },
+    acceptRequest: (ownerEmail, targetEmail, setSelected) => {
+        axios.post('/users/acceptRequest', {ownerEmail: ownerEmail, targetEmail: targetEmail})
+            .then(response => {
+                // setUser(response.data.data);
+                setSelected(null);
+            });
+    },
+    rejectRequest: (ownerEmail, targetEmail, setSelected) => {
+        axios.post('/users/rejectRequest', {ownerEmail: ownerEmail, targetEmail: targetEmail})
+            .then(response => {
+                // setUser(response.data.data);
+                setSelected(null);
+
+            });
+    },
+    deleteFriend: (ownerEmail, targetEmail, setSelected) => {
+        axios.post('/users/deleteFriend', {ownerEmail: ownerEmail, targetEmail: targetEmail})
+            .then(response => {
+                // setUser(response.data.data);
+                setSelected(null);
+
+            });
+    },
 }
 
 Object.freeze(UserService);

@@ -23,6 +23,12 @@ let userSchema = new Schema(
         },
         favorites: {
             type: Array
+        },
+        friends: {
+            type: Array
+        },
+        pendingRequest: {
+            type: Array
         }
     },
     { timestamps: true }

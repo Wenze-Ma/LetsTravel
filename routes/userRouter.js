@@ -18,5 +18,17 @@ router.get("/getUserByEmail/:email", userController.getUserByEmail);
 
 router.post("/addFavorites", userController.toggleFavorites);
 
+router.post("/addRequest", userController.addFriend);
+
+router.post("/getRequests", userController.getRequests);
+
+router.post("/getFriends", userController.getFriends);
+
+router.post("/acceptRequest", userController.acceptRequest);
+
+router.post("/rejectRequest", userController.rejectRequest);
+
+router.post("/deleteFriend", userController.deleteFriend);
+
 module.exports = router;
 

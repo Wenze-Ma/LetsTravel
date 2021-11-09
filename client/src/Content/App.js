@@ -11,7 +11,7 @@ import Discover from "./Discover";
 import Contact from "./Contact";
 import Find from "./Find";
 import Friends from "./Friends";
-import Groups from "./Groups";
+import Chat from "./Chat";
 import Favorites from "./Favorites";
 import Moments from "./Moments";
 import SearchResult from "./SearchResult";
@@ -57,8 +57,13 @@ function App() {
                             <Route exact path='/discover' component={Discover}/>
                             <Route exact path='/contact' component={Contact}/>
                             <Route exact path='/find' component={Find}/>
-                            <Route exact path='/friends' component={Friends}/>
-                            <Route exact path='/groups' component={Groups}/>
+                            <Route exact path='/friends'>
+                                <Friends
+                                    user={user}
+                                    isLoggedIn={isLoggedIn}
+                                />
+                            </Route>
+                            <Route exact path='/chats' component={Chat}/>
                             <Route exact path='/favorites'>
                                 <Favorites
                                     user={user}
