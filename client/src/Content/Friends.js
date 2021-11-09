@@ -5,18 +5,24 @@ import {Input, Space} from 'antd';
 import SearchUser from "../Form/SearchUser";
 import UserService from "../Service/UserService";
 import Meta from "antd/es/card/Meta";
+import {useHistory} from "react-router-dom";
 
 const {Search} = Input;
 const {Panel} = Collapse;
 
 
-function Friends({user, isLoggedIn}) {
+function Friends({user, isLoggedIn, setSelectedChat}) {
     // const [currentUser, setCurrentUser] = useState(null);
     const [visible, setVisible] = useState(false);
     const [requests, setRequests] = useState([]);
     const [groups, setGroups] = useState([]);
     const [friends, setFriends] = useState([]);
     const [selected, setSelected] = useState(null);
+    const history = useHistory();
+
+    const routeChange = (newPath) => {
+        history.push(`/${newPath}`);
+    }
 
     useEffect(() => {
         if (!isLoggedIn) {
@@ -99,13 +105,13 @@ function Friends({user, isLoggedIn}) {
     );
 
     const LeftView = () => (
-        <div style={{padding: "10px"}}>
+        <div style={{padding: "10px", overflow:"auto", height:"100%"}}>
             <Search placeholder="Search" key="searchFriend" onSearch={value => console.log(value)} enterButton/>
             <Collapse bordered={false} defaultActiveKey={['3']}>
                 <Panel header="New Friends" key="1" extra={newFriendsExtra()}>
                     <RequestList/>
                 </Panel>
-                <Panel header="Chat" key="2" extra={groups.length === 0 ? null : groups.length}>
+                <Panel header="Groups" key="2" extra={groups.length === 0 ? null : groups.length}>
                     <GroupList/>
                 </Panel>
                 <Panel header="Friends" key="3" extra={friends.length === 0 ? null : friends.length}>
@@ -118,6 +124,7 @@ function Friends({user, isLoggedIn}) {
                     setVisible(true);
                 }}
                 disabled={user == null}
+                style={{width:"100%"}}
             >
                 Add a Friend
             </Button>
@@ -149,7 +156,8 @@ function Friends({user, isLoggedIn}) {
                         [
                             <Button type="text" icon={<MessageOutlined />} onClick={() => {
                                 if (user) {
-
+                                    routeChange('chats');
+                                    setSelectedChat(selected);
                                 }
                             }}>Message</Button>,
                             <Button type="text" icon={<DeleteOutlined />} onClick={() => {
@@ -168,7 +176,7 @@ function Friends({user, isLoggedIn}) {
             </Card>
     );
     return (
-        <>
+        <div style={{overflow:"auto", height:"100%"}}>
             <Row style={{height: "100%"}}>
                 <Col flex={1} style={{background: "#fafafa"}}>
                     <LeftView/>
@@ -187,7 +195,7 @@ function Friends({user, isLoggedIn}) {
                 }}
                 onCancel={() => setVisible(false)}
             />
-        </>
+        </div>
     )
 }
 

@@ -31,6 +31,8 @@ function App() {
     const [sights, setSights] = useState([]);
     const [currentSelectedSight, setSelectedSight] = useState(null);
 
+    const [selectedChat, setSelectedChat] = useState(null);
+
     useEffect(() => {
         if (isLoggedIn) {
             UserService.restoreUser(setUser);
@@ -61,9 +63,17 @@ function App() {
                                 <Friends
                                     user={user}
                                     isLoggedIn={isLoggedIn}
+                                    setSelectedChat={setSelectedChat}
                                 />
                             </Route>
-                            <Route exact path='/chats' component={Chat}/>
+                            <Route exact path='/chats'>
+                                <Chat
+                                    user={user}
+                                    isLoggedIn={isLoggedIn}
+                                    selectedChat={selectedChat}
+                                    setSelectedChat={setSelectedChat}
+                                />
+                            </Route>
                             <Route exact path='/favorites'>
                                 <Favorites
                                     user={user}

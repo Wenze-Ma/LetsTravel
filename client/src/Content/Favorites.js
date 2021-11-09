@@ -4,17 +4,24 @@ import {DeleteOutlined, PlusOutlined} from "@ant-design/icons";
 import UserService from "../Service/UserService";
 
 
-function Favorites({user, setUser}) {
+function Favorites({user, setUser, isLoggedIn}) {
 
-    const [currentUser, setCurrentUser] = useState(null);
 
     useEffect(() => {
-        if (!user) {
-            UserService.restoreUser(setCurrentUser);
-        } else {
-            setCurrentUser(user)
-        }
-    }, [currentUser, user]);
+    }, [user]);
+
+    const Loading = () => (
+        !isLoggedIn ? <p>You should log in first!</p> :
+            <Card
+                style={{
+                    width: "80%",
+                    marginLeft: "auto",
+                    marginRight: "auto"
+                }}
+            >
+                <Skeleton loading={true} active/>
+            </Card>
+    );
 
 
     return (
@@ -28,16 +35,7 @@ function Favorites({user, setUser}) {
                 height: "100%",
             }}
         >
-            {!currentUser ?
-                <Card
-                    style={{
-                        width: "80%",
-                        marginLeft: "auto",
-                        marginRight: "auto"
-                    }}
-                >
-                    <Skeleton loading={true} active/>
-                </Card> :
+            {!user ? <Loading /> :
                 <List
                     itemLayout="vertical"
                     size="large"
@@ -46,7 +44,7 @@ function Favorites({user, setUser}) {
                         },
                         pageSize: 3,
                     }}
-                    dataSource={currentUser?.favorites}
+                    dataSource={user?.favorites}
                     renderItem={sight => (
                         <List.Item
                             key={sight.xid}
@@ -55,7 +53,9 @@ function Favorites({user, setUser}) {
                                     type="text"
                                     icon={<DeleteOutlined/>}
                                     onClick={() => {
-                                        UserService.addFavorites(currentUser.email, sight, setUser)
+                                        if (user) {
+                                            UserService.addFavorites(user.email, sight, setUser)
+                                        }
                                     }}
                                 >
                                     Remove
