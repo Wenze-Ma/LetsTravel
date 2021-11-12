@@ -1,32 +1,52 @@
 import React, {useEffect, useState} from "react";
-import {Content} from "antd/es/layout/layout";
-import {Avatar, Button, Col, Collapse, Comment, Divider, Form, List, Row, Space, Tooltip} from "antd";
-import SearchUser from "../Form/SearchUser";
+import {Avatar, Col, Divider, Form, Input, List, Row, Space} from "antd";
 import UserService from "../Service/UserService";
 import Search from "antd/es/input/Search";
 import Title from "antd/es/typography/Title";
-import TextArea from "antd/es/input/TextArea";
-import moment from "moment";
 import Text from "antd/es/typography/Text";
 
-function ScrollView(props) {
-    return null;
-}
+const {TextArea} = Input;
+
+const Editor = ({onChange, onSubmit, value}) => (
+    <TextArea rows={5} onChange={onChange} value={value} key="textArea"
+              placeholder="Enter your message here. Press 'Enter' to send it."
+              style={{background: "#f3f3f3"}}
+              onPressEnter={onSubmit}
+    />
+);
 
 function Chat({user, isLoggedIn, setSelectedChat, selectedChat}) {
 
     const [friends, setFriends] = useState([]);
+    const [messages, setMessages] = useState([]);
+    const [value, setValue] = useState('');
 
     useEffect(() => {
         if (!isLoggedIn) {
             setFriends([]);
             setSelectedChat(null);
+            setMessages([]);
             return;
         }
         if (user) {
             UserService.getFriends(user.email, setFriends);
+            if (selectedChat) {
+                UserService.fetchMessages(user.email, selectedChat.email, setMessages);
+            }
         }
-    }, [user]);
+
+    }, [user, selectedChat]);
+
+    const handleChange = e => {
+        setValue(e.target.value);
+    };
+
+    const handleSubmit = () => {
+        if (value === '') {
+            return;
+        }
+        UserService.sendMessage(user.email, selectedChat.email, value, setValue, setSelectedChat);
+    }
 
     const genderImg = (gender) => {
         if (gender === "male") {
@@ -71,67 +91,97 @@ function Chat({user, isLoggedIn, setSelectedChat, selectedChat}) {
         </div>
     );
 
-    const MyMessage = (sender, message, time) => (
+    const MyMessage = ({message, time}) => (
         <Space>
-            <Comment
-                content={
-                    <Text style={{overflowWrap:"break-word"}}>
-                        We supply a series of design principles, practical patterns and high quality design
-                        resources (Sketch and Axure), to help people create their product prototypes beautifully
-                        and efficiently.
-                    </Text>
-                }
-                // datetime={
-                //     <Tooltip title={moment().format('YYYY-MM-DD HH:mm:ss')}>
-                //         <span>{moment().fromNow()}</span>
-                //     </Tooltip>
-                // }
-                style={{background:"#123456"}}
-            />
-            <Avatar src="https://joeschmoe.io/api/v1/random" alt="Han Solo" />
+            <Space style={{
+                maxWidth: "60vh",
+                position: "relative",
+                padding: "8px 10px",
+                display: "block",
+                wordWrap: "break-word",
+                boxShadow: "0 4px 8px rgba(0, 0, 0, .28)",
+                borderRadius: "3px",
+                clear: "both",
+                zIndex: 999,
+                background: "#95ec69"
+            }}>
+                <Text>
+                    {message}
+                </Text>
+            </Space>
+            <div>
+                <Avatar src={user.src} alt={user.email}/>
+            </div>
         </Space>
     )
 
-    const Editor = ({onChange, onSubmit, submitting, value}) => (
-        <div>
-            <Form>
-                <Form.Item>
-                    <TextArea rows={5} onChange={onChange} value={value} placeholder="Enter your message here. Press 'Enter' to send it."/>
-                </Form.Item>
-                {/*<Form.Item*/}
-                {/*    wrapperCol={{*/}
-                {/*        offset: 22,*/}
-                {/*        span: 14,*/}
-                {/*    }}*/}
-                {/*    style={{ marginTop: "0px" }}*/}
-                {/*>*/}
-                {/*    <Button htmlType="submit" loading={submitting} onClick={onSubmit} type="primary">*/}
-                {/*        Send*/}
-                {/*    </Button>*/}
-                {/*</Form.Item>*/}
-            </Form>
-        </div>
-    );
+    const ReceivedMessage = ({message, time}) => (
+        <Space>
+            <div>
+                <Avatar src={selectedChat.src} alt={selectedChat.email}/>
+            </div>
+            <Space style={{
+                maxWidth: "60vh",
+                position: "relative",
+                padding: "8px 10px",
+                display: "block",
+                wordWrap: "break-word",
+                boxShadow: "0 4px 8px rgba(0, 0, 0, .28)",
+                borderRadius: "3px",
+                clear: "both",
+                background: "#ffffff",
+                zIndex: 999
+            }}>
+                <Text>
+                    {message}
+                </Text>
+            </Space>
+        </Space>
+    )
+
 
     const ChatView = () => (
-        <List>
-            <List.Item style={{maxWidth: "60vh"}}>
-                <MyMessage/>
-            </List.Item>
-        </List>
+        !user || !selectedChat ? null :
+        <List
+            dataSource={messages}
+            renderItem={m => (
+                m.isSend ?
+                    <List.Item style={{float: "right", clear:"both"}}>
+                        <MyMessage
+                            // sender={user}
+                            message={m.message}
+                        />
+                    </List.Item> :
+                    <List.Item style={{float: "left", clear:"both"}}>
+                        <ReceivedMessage
+                            // sender={selectedChat}
+                            message={m.message}
+                        />
+                    </List.Item>
+            )}
+        />
     );
 
     const RightView = () => (
         !selectedChat ? null :
-            <div style={{height: "100%", position: "relative"}}>
+            <div style={{
+                height: "100%", position: "relative", margin: "6px 0 0 0", fontSize: "12px",
+                lineHeight: "18px", overflowY: "hidden", width: "100%", float: "right"
+            }}>
                 <Title level={4}
-                       style={{margin: "10px"}}>{selectedChat.first_name + ' ' + selectedChat.last_name}</Title>
+                       style={{margin: "10px"}}>
+                    {selectedChat.first_name + ' ' + selectedChat.last_name}
+                </Title>
                 <Divider/>
-                <div style={{height:"68%", maxHeight: "60vh", background: "#dddddd", overflow: "auto"}}>
-                    <ChatView />
+                <div style={{height: "68%", maxHeight: "60vh", background: "#f3f3f3", overflow: "auto"}}>
+                    <ChatView/>
                 </div>
                 <div style={{height: "20%", marginTop: "10px"}}>
-                    <Editor />
+                    <Editor
+                        onChange={handleChange}
+                        value={value}
+                        onSubmit={handleSubmit}
+                    />
                 </div>
             </div>
     );

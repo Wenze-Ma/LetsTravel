@@ -127,6 +127,22 @@ const UserService = {
 
             });
     },
+    fetchMessages: (ownerEmail, targetEmail, setMessages) => {
+        axios.post('/users/fetchMessages', {ownerEmail: ownerEmail, targetEmail: targetEmail})
+            .then(response => {
+                const data = response.data.data;
+                const messages = data.messagesSent.concat(data.messagesReceived);
+                messages.sort((a, b) => a.time < b.time ? -1 : 1);
+                setMessages(messages);
+            })
+    },
+    sendMessage: (sender, receiver, message, setValue, setSelectedChat) => {
+        axios.post('/users/sendMessage', {sender: sender, receiver: receiver, message: message})
+            .then(response => {
+                setSelectedChat(response.data.data.receiver);
+                setValue('')
+            })
+    }
 }
 
 Object.freeze(UserService);

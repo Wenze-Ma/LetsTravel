@@ -471,3 +471,27 @@ module.exports.sendMessage = async (req, res) => {
         });
     }
 }
+
+module.exports.fetchMessages = async (req, res) => {
+    try {
+        let user = await User.findOne({
+            email: req.body.ownerEmail
+        });
+        if (user) {
+            const messagesSent = user.messageSent.filter(m => m.email === req.body.targetEmail);
+            messagesSent.map(m => m.isSend = true);
+            const messagesReceived = user.messageReceived.filter(m => m.email === req.body.targetEmail);
+            messagesReceived.map(m => m.isSend = false);
+
+            res.status(200).json({
+                status: 200,
+                data: {messagesSent: messagesSent, messagesReceived: messagesReceived}
+            })
+        }
+    } catch (err) {
+        res.status(400).json({
+            status: 400,
+            message: err.message
+        });
+    }
+}
