@@ -30,5 +30,7 @@ router.post("/rejectRequest", userController.rejectRequest);
 
 router.post("/deleteFriend", userController.deleteFriend);
 
+router.post("/sendMessage", userController.sendMessage);
+
 module.exports = router;
 

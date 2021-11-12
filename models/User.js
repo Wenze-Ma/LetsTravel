@@ -29,6 +29,12 @@ let userSchema = new Schema(
         },
         pendingRequest: {
             type: Array
+        },
+        messageSent: {
+            type: Array
+        },
+        messageReceived: {
+            type: Array
         }
     },
     { timestamps: true }

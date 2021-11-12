@@ -427,3 +427,47 @@ module.exports.deleteFriend = async (req, res) => {
         });
     }
 }
+
+module.exports.sendMessage = async (req, res) => {
+    try {
+        let sender = await User.findOne({
+            email: req.body.sender
+        });
+        if (sender) {
+            const date = new Date();
+            if (!sender.messageSent) {
+                sender.messageSent = [{email: req.body.receiver, message: req.body.message, time: date}];
+            } else {
+                sender.messageSent = [...sender.messageSent, {email: req.body.receiver, message: req.body.message, time: date}];
+            }
+            await sender.save();
+
+            let receiver = await User.findOne({
+                email: req.body.receiver
+            });
+            if (receiver) {
+                if (!receiver) {
+                    receiver.messageReceived = [{email: req.body.sender, message: req.body.message, time: date}];
+                } else {
+                    receiver.messageReceived = [...receiver.messageReceived, {email: req.body.sender, message: req.body.message, time: date}];
+                }
+                await receiver.save();
+                res.status(200).json({
+                    status: 200,
+                    data: {receiver: receiver, sender: sender},
+                    success: true
+                });
+                return;
+            }
+        }
+        res.status(200).json({
+            status: 200,
+            message: "fail"
+        });
+    } catch (err) {
+        res.status(400).json({
+            status: 400,
+            message: err.message
+        });
+    }
+}

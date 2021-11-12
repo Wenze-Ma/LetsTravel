@@ -1,11 +1,12 @@
 import React, {useEffect, useState} from "react";
-import {Row, Col, List, Button, Empty, Collapse, Avatar, Card} from 'antd';
+import {Row, Col, List, Button, Empty, Collapse, Avatar, Card, Badge} from 'antd';
 import {CheckOutlined, CloseOutlined, DeleteOutlined, MessageOutlined} from "@ant-design/icons";
 import {Input, Space} from 'antd';
 import SearchUser from "../Form/SearchUser";
 import UserService from "../Service/UserService";
 import Meta from "antd/es/card/Meta";
 import {useHistory} from "react-router-dom";
+import Text from "antd/es/typography/Text";
 
 const {Search} = Input;
 const {Panel} = Collapse;
@@ -41,19 +42,18 @@ function Friends({user, isLoggedIn, setSelectedChat}) {
 
     const newFriendsExtra = () => (
         requests.length === 0 ? null :
-            <div
-                style={{
-                    borderRadius: "50%",
-                    width: "20px",
-                    height: "20px",
-                    textAlign: "center",
-                    background: "#f23e35",
-                    color: "#fff"
-                }}
-            >
-                {requests.length}
-            </div>
+            <Badge count={requests.length}/>
     )
+
+    const genderImg = (gender) => {
+        if (gender === "male") {
+            return "https://img.icons8.com/color/48/000000/male.png";
+        }
+        if (gender === "female") {
+            return "https://img.icons8.com/color/48/000000/female.png";
+        }
+        return null;
+    }
 
     const FriendList = () => (
         friends.length === 0 ? null :
@@ -66,7 +66,7 @@ function Friends({user, isLoggedIn, setSelectedChat}) {
                             title={
                                 <span>
                                     <a onClick={() => setSelected(user)}>{user.first_name} {user.last_name}</a>
-                                    {/*<img src="https://img.icons8.com/color/48/000000/male.png"/>*/}
+                                    <img src={genderImg(user.gender)} height="20px" style={{ margin:"10px" }}/>
                                 </span>
                             }
                             description={user.email}
@@ -105,7 +105,7 @@ function Friends({user, isLoggedIn, setSelectedChat}) {
     );
 
     const LeftView = () => (
-        <div style={{padding: "10px", overflow:"auto", height:"100%"}}>
+        <div style={{padding: "10px", overflow: "auto", height: "100%"}}>
             <Search placeholder="Search" key="searchFriend" onSearch={value => console.log(value)} enterButton/>
             <Collapse bordered={false} defaultActiveKey={['3']}>
                 <Panel header="New Friends" key="1" extra={newFriendsExtra()}>
@@ -124,7 +124,7 @@ function Friends({user, isLoggedIn, setSelectedChat}) {
                     setVisible(true);
                 }}
                 disabled={user == null}
-                style={{width:"100%"}}
+                style={{width: "100%"}}
             >
                 Add a Friend
             </Button>
@@ -154,13 +154,13 @@ function Friends({user, isLoggedIn, setSelectedChat}) {
                             }}>Reject</Button>,
                         ] :
                         [
-                            <Button type="text" icon={<MessageOutlined />} onClick={() => {
+                            <Button type="text" icon={<MessageOutlined/>} onClick={() => {
                                 if (user) {
                                     routeChange('chats');
                                     setSelectedChat(selected);
                                 }
                             }}>Message</Button>,
-                            <Button type="text" icon={<DeleteOutlined />} onClick={() => {
+                            <Button type="text" icon={<DeleteOutlined/>} onClick={() => {
                                 if (user) {
                                     UserService.deleteFriend(user?.email, selected.email, setSelected);
                                 }
@@ -176,7 +176,7 @@ function Friends({user, isLoggedIn, setSelectedChat}) {
             </Card>
     );
     return (
-        <div style={{overflow:"auto", height:"100%"}}>
+        <div style={{overflow: "auto", height: "100%"}}>
             <Row style={{height: "100%"}}>
                 <Col flex={1} style={{background: "#fafafa"}}>
                     <LeftView/>
