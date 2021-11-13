@@ -14,6 +14,7 @@ import Text from "antd/es/typography/Text";
 import {useHistory, useLocation} from "react-router-dom";
 import SightService from "../Service/SightService";
 import UserService from "../Service/UserService";
+import Share from "../Form/Share";
 
 const {TextArea} = Input;
 
@@ -38,6 +39,8 @@ function SightDetail({sight, user, setSelectedSight, setUser}) {
     const history = useHistory();
     const [stars, setStars] = useState(0);
     const [comments, setComments] = useState([]);
+    const [shareVisible, setShareVisible] = useState(false);
+
 
     const pathName = useLocation().pathname;
 
@@ -162,7 +165,9 @@ function SightDetail({sight, user, setSelectedSight, setUser}) {
                                 twoToneColor={user.favorites.some(f => f.xid === sight.xid) ? "#eb2f96" : ""}
                                 onClick={() => UserService.addFavorites(user.email, sight, setUser)}
                             />
-                            <ShareAltOutlined/>
+                            <ShareAltOutlined
+                                onClick={() => setShareVisible(true)}
+                            />
                             <Rate allowHalf value={stars} onChange={submitRate}/>
                             <Text
                                 style={{textAlign: 'center'}}>{stars === 0 ? "Click to rate" : "Click to change your rate"}</Text>
@@ -202,6 +207,14 @@ function SightDetail({sight, user, setSelectedSight, setUser}) {
                         }
                     />
                 }
+                <Share
+                    visible={shareVisible}
+                    onSend={values => {
+                        UserService.share(user.email, values, sight, setShareVisible);
+                    }}
+                    onCancel={() => setShareVisible(false)}
+                    user={user}
+                />
             </div>
     );
 }

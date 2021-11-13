@@ -35,7 +35,7 @@ function SideNav() {
                 <Menu.Item key="friends" icon={<UserOutlined/>} onClick={() => {routeChange('/friends')}}>Friends</Menu.Item>
                 <Menu.Item key="chats" icon={<MessageOutlined />} onClick={() => {routeChange('/chats')}}>Chats</Menu.Item>
                 <Menu.Item key="favorites" icon={<HeartOutlined/>} onClick={() => {routeChange('/favorites')}}>Favorites</Menu.Item>
-                <Menu.Item key="moments" icon={<CompassOutlined/>} onClick={() => {routeChange('/moments')}}>Moments</Menu.Item>
+                {/*<Menu.Item key="moments" icon={<CompassOutlined/>} onClick={() => {routeChange('/moments')}}>Moments</Menu.Item>*/}
             </Menu>
         </Sider>
     )

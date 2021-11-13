@@ -104,6 +104,16 @@ const UserService = {
                 setFriends(response.data.users);
             });
     },
+    getFriendsWithChats: (email, setFriends, selectedChat) => {
+        axios.post('/users/getFriendsWithChats', {email: email})
+            .then(response => {
+                const friends = response.data.users;
+                if (!!selectedChat && !friends.some(f => f.email === selectedChat.email)) {
+                    friends.push(selectedChat);
+                }
+                setFriends(friends);
+            })
+    },
     acceptRequest: (ownerEmail, targetEmail, setSelected) => {
         axios.post('/users/acceptRequest', {ownerEmail: ownerEmail, targetEmail: targetEmail})
             .then(response => {
@@ -133,7 +143,12 @@ const UserService = {
                 const data = response.data.data;
                 const messages = data.messagesSent.concat(data.messagesReceived);
                 messages.sort((a, b) => a.time < b.time ? -1 : 1);
+                let i = 0;
+                for (const message of messages) {
+                    message.id = i++;
+                }
                 setMessages(messages);
+                // scrollToBottom();
             })
     },
     sendMessage: (sender, receiver, message, setValue, setSelectedChat) => {
@@ -141,6 +156,13 @@ const UserService = {
             .then(response => {
                 setSelectedChat(response.data.data.receiver);
                 setValue('')
+            })
+    },
+    share: (sender, receivers, sight, setShareVisible) => {
+        axios.post('/users/share', {sender: sender, receivers: receivers, message: sight})
+            .then(response => {
+                message.success("Shared success")
+                setShareVisible(false);
             })
     }
 }

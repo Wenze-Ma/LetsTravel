@@ -329,6 +329,36 @@ module.exports.getFriends = async (req, res) => {
     }
 }
 
+module.exports.getFriendsWithChats = async (req, res) => {
+    try {
+        let user = await User.findOne({
+            email: req.body.email
+        });
+        if (user) {
+            let friends = user.friends;
+            let users = [];
+            for (const friend of friends) {
+                if (!user.messageSent.some(m => m.email === friend) &&
+                    !user.messageReceived.some(m => m.email === friend)) {
+                    continue;
+                }
+                let current = await User.findOne({
+                    email: friend
+                });
+                users.push(current);
+            }
+            res.status(200).json({
+                users: users
+            });
+        }
+    } catch (err) {
+        res.status(400).json({
+            status: 400,
+            message: err.message
+        });
+    }
+}
+
 
 module.exports.acceptRequest = async (req, res) => {
     try {
@@ -488,6 +518,54 @@ module.exports.fetchMessages = async (req, res) => {
                 data: {messagesSent: messagesSent, messagesReceived: messagesReceived}
             })
         }
+    } catch (err) {
+        res.status(400).json({
+            status: 400,
+            message: err.message
+        });
+    }
+}
+
+module.exports.share = async (req, res) => {
+    try {
+        let sender = await User.findOne({
+            email: req.body.sender
+        });
+        if (sender) {
+
+            let receivers = [];
+            for (const current of req.body.receivers) {
+                let receiver = await User.findOne({
+                    email: current
+                });
+                const date = new Date();
+                if (!sender.messageSent) {
+                    sender.messageSent = [{email: current, message: req.body.message, time: date, share: true}];
+                } else {
+                    sender.messageSent = [...sender.messageSent, {email: current, message: req.body.message, time: date, share: true}];
+                }
+                await sender.save();
+                if (receiver) {
+                    if (!receiver) {
+                        receiver.messageReceived = [{email: req.body.sender, message: req.body.message, time: date, share: true}];
+                    } else {
+                        receiver.messageReceived = [...receiver.messageReceived, {email: req.body.sender, message: req.body.message, time: date, share: true}];
+                    }
+                    await receiver.save();
+                    receivers.push(receiver);
+                }
+            }
+            res.status(200).json({
+                status: 200,
+                data: {sender: sender, receivers: receivers},
+                success: true
+            });
+            return;
+        }
+        res.status(200).json({
+            status: 200,
+            message: "fail"
+        });
     } catch (err) {
         res.status(400).json({
             status: 400,

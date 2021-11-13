@@ -156,8 +156,8 @@ function Friends({user, isLoggedIn, setSelectedChat}) {
                         [
                             <Button type="text" icon={<MessageOutlined/>} onClick={() => {
                                 if (user) {
-                                    routeChange('chats');
                                     setSelectedChat(selected);
+                                    routeChange('chats');
                                 }
                             }}>Message</Button>,
                             <Button type="text" icon={<DeleteOutlined/>} onClick={() => {

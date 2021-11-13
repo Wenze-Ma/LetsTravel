@@ -24,6 +24,8 @@ router.post("/getRequests", userController.getRequests);
 
 router.post("/getFriends", userController.getFriends);
 
+router.post("/getFriendsWithChats", userController.getFriendsWithChats);
+
 router.post("/acceptRequest", userController.acceptRequest);
 
 router.post("/rejectRequest", userController.rejectRequest);
@@ -33,6 +35,8 @@ router.post("/deleteFriend", userController.deleteFriend);
 router.post("/sendMessage", userController.sendMessage);
 
 router.post("/fetchMessages", userController.fetchMessages);
+
+router.post("/share", userController.share);
 
 module.exports = router;
 

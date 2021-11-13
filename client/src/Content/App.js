@@ -88,7 +88,7 @@ function App() {
                                     currentSelectedSight={currentSelectedSight}
                                     setSelectedSight={setSelectedSight}
                                     user={user}
-                                    setUser={setUser}
+                                    isLoggedIn={isLoggedIn}
                                 />
                             </Route>
                             <Route exact path='/profile'>

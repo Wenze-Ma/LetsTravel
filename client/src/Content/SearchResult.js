@@ -4,8 +4,10 @@ import {Alert, Card, List, message, Image, Button, Empty, Skeleton} from "antd";
 import {MoreOutlined, ShareAltOutlined, AimOutlined} from "@ant-design/icons";
 import Meta from "antd/es/card/Meta";
 import SightService from "../Service/SightService";
+import UserService from "../Service/UserService";
+import Share from "../Form/Share";
 
-function SearchResult({sights, setSights, currentSelectedSight, setSelectedSight}) {
+function SearchResult({sights, setSights, currentSelectedSight, setSelectedSight, user, isLoggedIn}) {
     const pathName = useLocation().pathname;
     const combined = pathName.split("/")[2];
     const place = combined.split("&")[0].split("=")[1];
@@ -14,6 +16,8 @@ function SearchResult({sights, setSights, currentSelectedSight, setSelectedSight
     const history = useHistory();
     const [isSelected, setIsSelected] = useState(false);
 
+    const [shareVisible, setShareVisible] = useState(false);
+
 
     const routeChange = (newPath) => {
         history.push(`/${newPath}`);
@@ -21,7 +25,7 @@ function SearchResult({sights, setSights, currentSelectedSight, setSelectedSight
 
     useEffect(() => {
         SightService.fetchSightsByCity(place, radius, setSights);
-    }, []);
+    }, [user]);
 
 
     function displayItem() {
@@ -52,7 +56,11 @@ function SearchResult({sights, setSights, currentSelectedSight, setSelectedSight
             }}
             actions={[
                 <Button type="text" icon={<ShareAltOutlined/>} onClick={() => {
-                    console.log(currentSelectedSight.name)
+                    if (!isLoggedIn) {
+                        message.error("You should log in first!")
+                    } else {
+                        setShareVisible(true);
+                    }
                 }}>Share</Button>,
                 <Button type="text" icon={<MoreOutlined/>} onClick={() => {
                     routeChange('sightDetail/xid=' + currentSelectedSight.xid)
@@ -134,6 +142,14 @@ function SearchResult({sights, setSights, currentSelectedSight, setSelectedSight
             >
                 {displayItem()}
             </div>
+            <Share
+                visible={shareVisible}
+                onSend={values => {
+                    UserService.share(user.email, values, currentSelectedSight, setShareVisible);
+                }}
+                onCancel={() => setShareVisible(false)}
+                user={user}
+            />
         </div>
     );
 }
