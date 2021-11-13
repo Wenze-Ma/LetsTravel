@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {Row, Col, List, Button, Empty, Collapse, Avatar, Card, Badge} from 'antd';
+import {Row, Col, List, Button, Empty, Collapse, Avatar, Card, Badge, Skeleton} from 'antd';
 import {CheckOutlined, CloseOutlined, DeleteOutlined, MessageOutlined} from "@ant-design/icons";
 import {Input, Space} from 'antd';
 import SearchUser from "../Form/SearchUser";
@@ -39,6 +39,19 @@ function Friends({user, isLoggedIn, setSelectedChat}) {
             UserService.getFriends(user.email, setFriends);
         }
     }, [user, selected]);
+
+    const Loading = () => (
+        !isLoggedIn ? <p>You should log in first!</p> :
+            <Card
+                style={{
+                    width: "80%",
+                    marginLeft: "auto",
+                    marginRight: "auto"
+                }}
+            >
+                <Skeleton loading={true} active/>
+            </Card>
+    );
 
     const newFriendsExtra = () => (
         requests.length === 0 ? null :
@@ -176,6 +189,7 @@ function Friends({user, isLoggedIn, setSelectedChat}) {
             </Card>
     );
     return (
+        !isLoggedIn ? <Loading /> :
         <div style={{overflow: "auto", height: "100%"}}>
             <Row style={{height: "100%"}}>
                 <Col flex={1} style={{background: "#fafafa"}}>

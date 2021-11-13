@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from "react";
-import {Avatar, Col, Divider, Form, Input, List, Row, Space} from "antd";
+import {Avatar, Card, Col, Divider, Form, Input, List, Row, Skeleton, Space} from "antd";
 import UserService from "../Service/UserService";
 import Search from "antd/es/input/Search";
 import Title from "antd/es/typography/Title";
@@ -47,6 +47,19 @@ function Chat({user, isLoggedIn, setSelectedChat, selectedChat}) {
     //         messagesEndRef.current.scrollIntoView({ behavior: "smooth" })
     //     }
     // }
+
+    const Loading = () => (
+        !isLoggedIn ? <p>You should log in first!</p> :
+            <Card
+                style={{
+                    width: "80%",
+                    marginLeft: "auto",
+                    marginRight: "auto"
+                }}
+            >
+                <Skeleton loading={true} active/>
+            </Card>
+    );
 
     const handleSubmit = (value, setValue) => {
         if (value === '') {
@@ -255,14 +268,16 @@ function Chat({user, isLoggedIn, setSelectedChat, selectedChat}) {
 
     return (
         <div style={{height: "100%"}}>
-            <Row style={{height: "100%"}}>
-                <Col flex={1} style={{background: "#fafafa"}}>
-                    <LeftView/>
-                </Col>
-                <Col flex={7} style={{padding: "10px"}}>
-                    <RightView/>
-                </Col>
-            </Row>
+            {!user ? <Loading/> :
+                <Row style={{height: "100%"}}>
+                    <Col flex={1} style={{background: "#fafafa"}}>
+                        <LeftView/>
+                    </Col>
+                    <Col flex={7} style={{padding: "10px"}}>
+                        <RightView/>
+                    </Col>
+                </Row>
+            }
         </div>
     )
 }
