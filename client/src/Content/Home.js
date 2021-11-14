@@ -15,17 +15,17 @@ function Home() {
     return (
         <Content
             className="site-layout-background"
-            // style={{
-            //     minHeight: 280,
-            //     width: '100%',
-            //     overflow: 'hidden',
-            //     background: 'url("http://www.totaltravelsolutions.co.in/img/slide-image-4.jpg") no-repeat 50%/cover',
-            //     opacity: '0.85'
-            // }}
+            style={{
+                minHeight: 280,
+                width: '100%',
+                overflow: 'hidden',
+                background: 'url("http://www.totaltravelsolutions.co.in/img/slide-image-4.jpg") no-repeat 50%/cover',
+                opacity: '0.85'
+            }}
         >
-            <div className="site-layout-background" style={{ padding: 24, textAlign: 'center', marginTop:"50px"}}>
-            <Button type="primary" onClick={() =>  routeChange('find')} >Start</Button>
-            </div>
+            {/*<div className="site-layout-background" style={{ padding: 24, textAlign: 'center', marginTop:"50px"}}>*/}
+            <Button type="primary" style={{marginLeft:"auto", marginRight:"auto", display:"block", marginTop:"100px"}} onClick={() =>  routeChange('find')} danger>Start</Button>
+            {/*</div>*/}
 
         </Content>
     )
