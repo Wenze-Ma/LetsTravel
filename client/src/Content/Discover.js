@@ -12,7 +12,7 @@ function Discover() {
                 minHeight: 280,
             }}
         >
-            Discover Page!
+            This page requires your imagination!
         </Content>
     )
 }

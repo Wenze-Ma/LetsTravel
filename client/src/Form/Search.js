@@ -45,6 +45,7 @@ const Search = ({ onFinish, onFinishFailed }) => {
             >
                 <Input
                     type="number"
+                    min={0}
                 />
             </Form.Item>
 

@@ -59,7 +59,8 @@ function SightDetail({sight, user, setSelectedSight, setUser}) {
 
 
     const handleSubmit = () => {
-        if (!value) {
+        if (!value || value.trim().length === 0) {
+            message.error("The body cannot by empty");
             return;
         }
 
@@ -168,7 +169,7 @@ function SightDetail({sight, user, setSelectedSight, setUser}) {
                             <ShareAltOutlined
                                 onClick={() => setShareVisible(true)}
                             />
-                            <Rate allowHalf value={stars} onChange={submitRate}/>
+                            <Rate allowHalf value={stars} onChange={submitRate} allowClear={false}/>
                             <Text
                                 style={{textAlign: 'center'}}>{stars === 0 ? "Click to rate" : "Click to change your rate"}</Text>
                         </> :
