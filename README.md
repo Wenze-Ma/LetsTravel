@@ -34,21 +34,3 @@ This api provides:
 
 ## Data Structure and Storage
 ![Alt text](https://github.com/csse-490-advanced-web-development/final-project-team-6-wenze/blob/main/doc/LetsTravel_DataStructure.png)
-
-## Project Setup
-
-### Cloning and Installing Dependencies
-
-<TODO: Fill this in.  See the Lab 3 README for inspiration>
-
-### Running Tests
-
-<TODO: Fill this in.  See the Lab 3 README for inspiration>
-
-### Running Locally
-
-<TODO: Fill this in.  See the Lab 3 README for inspiration>
-
-## Deploying
-
-<TODO: Fill this in.  See the Lab 3 README for inspiration>
