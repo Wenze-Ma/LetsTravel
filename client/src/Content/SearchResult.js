@@ -145,7 +145,11 @@ function SearchResult({sights, setSights, currentSelectedSight, setSelectedSight
             <Share
                 visible={shareVisible}
                 onSend={values => {
-                    UserService.share(user.email, values, currentSelectedSight, setShareVisible);
+                    if (values.length === 0) {
+                        message.error("Invalid input!")
+                    } else {
+                        UserService.share(user.email, values, currentSelectedSight, setShareVisible);
+                    }
                 }}
                 onCancel={() => setShareVisible(false)}
                 user={user}

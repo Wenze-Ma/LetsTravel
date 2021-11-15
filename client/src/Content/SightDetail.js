@@ -211,7 +211,11 @@ function SightDetail({sight, user, setSelectedSight, setUser}) {
                 <Share
                     visible={shareVisible}
                     onSend={values => {
-                        UserService.share(user.email, values, sight, setShareVisible);
+                        if (values.length === 0) {
+                            message.error("Invalid input!")
+                        } else {
+                            UserService.share(user.email, values, sight, setShareVisible);
+                        }
                     }}
                     onCancel={() => setShareVisible(false)}
                     user={user}
